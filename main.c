@@ -24,7 +24,7 @@ pthread_t threadKom;
 
 void finalizuj()
 {
-    pthread_mutex_destroy( &stateMut);
+    pthread_mutex_destroy(&stateMut);
     pthread_mutex_destroy(&clockMutex);
     /* Czekamy, aż wątek potomny się zakończy */
     println("czekam na wątek \"komunikacyjny\"\n" );
@@ -57,6 +57,17 @@ void check_thread_support(int provided)
     }
 }
 
+void attach_debugger() {
+    int attached = 0;
+
+    // also write PID to a file
+    FILE* file = fopen("/tmp/mpi_debug.pid", "w");
+    fprintf(file, "%d\n", getpid());
+    fclose(file);
+
+    printf("Waiting for debugger to be attached, PID: %d\n", getpid());
+    while (!attached) sleep(1);
+}
 
 int main(int argc, char **argv)
 {
@@ -65,23 +76,15 @@ int main(int argc, char **argv)
     MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
     check_thread_support(provided);
     srand(rank);
-    /* zob. util.c oraz util.h */
+    // zob. util.c oraz util.h
     inicjuj_typ_pakietu(); // tworzy typ pakietu
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-    /* startKomWatek w watek_komunikacyjny.c 
-     * w vi najedź kursorem na nazwę pliku i wciśnij klawisze gf
-     * powrót po wciśnięciu ctrl+6
-     * */
+
     pthread_create( &threadKom, NULL, startKomWatek , 0);
 
-    /* mainLoop w watek_glowny.c 
-     * w vi najedź kursorem na nazwę pliku i wciśnij klawisze gf
-     * powrót po wciśnięciu ctrl+6
-     * */
-    mainLoop(); // możesz także wcisnąć ctrl-] na nazwie funkcji
-		// działa, bo używamy ctags (zob Makefile)
-		// jak nie działa, wpisz set tags=./tags :)
+    // mainLoop w watek_glowny.c 
+    mainLoop()
     
     finalizuj();
     return 0;

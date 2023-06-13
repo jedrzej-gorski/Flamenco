@@ -3,12 +3,12 @@
 !_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
-!_TAG_PROGRAM_VERSION	Development	//
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 ACK	util.h	17;"	d
 APP_PKT	util.h	20;"	d
 FALSE	main.h	15;"	d
 FINISH	util.h	21;"	d
-FLAGS	Makefile	/^FLAGS=-g$/;"	m
+FLAGS	Makefile	/^FLAGS=-DDEBUG -g$/;"	m
 HEADERS	Makefile	/^HEADERS=$(SOURCES:.c=.h)$/;"	m
 InFinish	util.h	/^typedef enum {InRun, InMonitor, InWant, InSection, InFinish} state_t;$/;"	e	enum:__anon2
 InMonitor	util.h	/^typedef enum {InRun, InMonitor, InWant, InSection, InFinish} state_t;$/;"	e	enum:__anon2
@@ -18,18 +18,27 @@ InWant	util.h	/^typedef enum {InRun, InMonitor, InWant, InSection, InFinish} sta
 LAMPORTH	lamport.h	2;"	d
 MAINH	main.h	2;"	d
 MPI_PAKIET_T	util.c	/^MPI_Datatype MPI_PAKIET_T;$/;"	v
+MSG_LIST_GC	g_variables.h	/^int* MSG_LIST_GC;$/;"	v
+MSG_LIST_GD	common_variables.h	/^packet_t* MSG_LIST_GD;/;"	v
+MSG_LIST_VENUE	g_variables.h	/^int* MSG_LIST_VENUE;$/;"	v
 NITEMS	util.h	13;"	d
 RELEASE	util.h	19;"	d
 REQUEST	util.h	18;"	d
+REQ_CLOCK_GC	g_variables.h	/^int REQ_CLOCK_GC;$/;"	v
+REQ_CLOCK_GD	g_variables.h	/^int REQ_CLOCK_GD;$/;"	v
+REQ_CLOCK_VENUE	g_variables.h	/^int REQ_CLOCK_VENUE;$/;"	v
 ROOT	main.h	19;"	d
 SEC_IN_STATE	main.h	16;"	d
 SOURCES	Makefile	/^SOURCES=$(wildcard *.c)$/;"	m
 STATE_CHANGE_PROB	main.h	17;"	d
 TRUE	main.h	14;"	d
 UTILH	util.h	2;"	d
+VENUE_INDEX	g_variables.h	/^int VENUE_INDEX;/;"	v
+VENUE_REQ_QUEUE	g_variables.h	/^int* VENUE_REQ_QUEUE;$/;"	v
 WATEK_GLOWNY_H	watek_glowny.h	2;"	d
 WATEK_KOMUNIKACYJNY_H	watek_komunikacyjny.h	2;"	d
 ackCount	main.c	/^int ackCount = 0;$/;"	v
+attach_debugger	main.c	/^void attach_debugger() {$/;"	f
 changeState	util.c	/^void changeState( state_t newState )$/;"	f
 check_thread_support	main.c	/^void check_thread_support(int provided)$/;"	f
 clockMutex	lamport.c	/^pthread_mutex_t clockMutex = PTHREAD_MUTEX_INITIALIZER;/;"	v
