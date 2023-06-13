@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     pthread_create( &threadKom, NULL, startKomWatek , 0);
 
     // mainLoop w watek_glowny.c 
-    mainLoop()
+    mainLoop();
     
     finalizuj();
     return 0;
