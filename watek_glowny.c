@@ -19,22 +19,29 @@ void mainLoop()
 					pkt->data = perc;
 					ackCount = 0;
 					for (int i = 0; i <= size - 1; i++) {
-						if (i != rank)
-							sendPacket(pkt, i, REQUEST);
+						// wyslij request również do siebie
+						sendPacket(pkt, i, REQUEST);
 					}
 					changeState( InWant );
 					free(pkt);
 				}
-				debug("Skończyłem myśleć");
+				else {
+					debug("Myślę");
+				}
 				break;
 			}
 			case InWant: {
-				println("Czekam na wejście do sekcji krytycznej")
+				
 				// tutaj zapewne jakiś muteks albo zmienna warunkowa
 				// bo aktywne czekanie jest BUE
 				// tutaj sem wait, bo mutex undefined behavior jak nie owner ?
-				if ( ackCount == size - 1) 
-					changeState(InSection);
+				while (!canEnter) {
+					println("Czekam na wejście do sekcji krytycznej")
+					sleep(SEC_IN_STATE);
+				}
+
+				canEnter = 0;
+				changeState(InSection);
 				break;
 			}
 			case InSection: {
@@ -47,9 +54,9 @@ void mainLoop()
 					debug("Zmieniam stan na wysyłanie");
 					packet_t *pkt = malloc(sizeof(packet_t));
 					pkt->data = perc;
-					for (int i=0;i<=size-1;i++) {
-						if (i != rank)
-							sendPacket( pkt, (rank + 1) % size, RELEASE);
+					for (int i = 0; i <= size - 1; i++) {
+						// wyslij release również do siebie
+						sendPacket(pkt, (rank + i) % size, RELEASE);
 					}
 					changeState( InRun );
 					free(pkt);
@@ -59,7 +66,7 @@ void mainLoop()
 			default: {
 				break;
 			}
-			sleep(SEC_IN_STATE);
 		}
+		sleep(SEC_IN_STATE);
 	}
 }

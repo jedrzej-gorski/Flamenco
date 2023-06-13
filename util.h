@@ -1,6 +1,7 @@
 #ifndef UTILH
 #define UTILH
 #include "main.h"
+#include "request_queue.h"
 
 /* typ pakietu */
 typedef struct {
@@ -31,4 +32,10 @@ extern state_t stan;
 extern pthread_mutex_t stateMut;
 /* zmiana stanu, obwarowana muteksem */
 void changeState( state_t );
+
+extern RequestQueue requestQueue;
+extern int* msgClock;
+
+extern volatile int canEnter; // should use conditional variable
+
 #endif

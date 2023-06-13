@@ -13,6 +13,9 @@
  */
 int rank, size;
 int ackCount = 0;
+RequestQueue requestQueue;
+int* msgClock;
+volatile int canEnter = 0;
 /* 
  * Każdy proces ma dwa wątki - główny i komunikacyjny
  * w plikach, odpowiednio, watek_glowny.c oraz (siurpryza) watek_komunikacyjny.c
@@ -24,6 +27,8 @@ pthread_t threadKom;
 
 void finalizuj()
 {
+    free(msgClock);
+    freeRequestQueue(&requestQueue);
     pthread_mutex_destroy(&stateMut);
     pthread_mutex_destroy(&clockMutex);
     /* Czekamy, aż wątek potomny się zakończy */
@@ -81,7 +86,10 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    pthread_create( &threadKom, NULL, startKomWatek , 0);
+    msgClock = (int*)malloc(sizeof(size) * size);
+    initRequestQueue(&requestQueue, 5);
+
+    pthread_create(&threadKom, NULL, startKomWatek , 0);
 
     // mainLoop w watek_glowny.c 
     mainLoop();

@@ -7,6 +7,15 @@
      _a > _b ? _a : _b; })
 
 /* wątek komunikacyjny; zajmuje się odbiorem i reakcją na komunikaty */
+
+void checkCriticalSectionCondition() {
+    if (getFirstSource(&requestQueue) == rank && ackCount == size) {
+        debug("Mogę wejść")
+        printRequestQueue(&requestQueue);
+        canEnter = 1;
+    }
+}
+
 void *startKomWatek(void *ptr)
 {
     MPI_Status status;
@@ -25,15 +34,24 @@ void *startKomWatek(void *ptr)
         switch ( status.MPI_TAG ) {
 	    case REQUEST:
         {
+            add(&requestQueue, status.MPI_SOURCE, pakiet.ts);
             debug("Ktoś coś prosi. A niech ma!")
 		    sendPacket( 0, status.MPI_SOURCE, ACK );
             break;
         }
 	    case ACK:
         {
-            debug("Dostałem ACK od %d, mam już %d", status.MPI_SOURCE, ackCount);
 	        ackCount++; /* czy potrzeba tutaj muteksa? Będzie wyścig, czy nie będzie? Zastanówcie się. */
+            debug("Dostałem ACK od %d, mam już %d", status.MPI_SOURCE, ackCount);
+            checkCriticalSectionCondition();
 	        break;
+        }
+        case RELEASE:
+        {
+            removeItem(&requestQueue, status.MPI_SOURCE);
+            debug("Dostałem RELEASE od %d", status.MPI_SOURCE);
+            checkCriticalSectionCondition();
+            break;
         }
 	    default:
 	    break;

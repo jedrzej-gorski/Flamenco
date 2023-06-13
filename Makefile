@@ -17,4 +17,4 @@ tags: ${SOURCES} ${HEADERS}
 	ctags -R .
 
 run: main Makefile tags
-	mpirun -oversubscribe -np 2 ./main
+	mpirun -oversubscribe -np 8 ./main
