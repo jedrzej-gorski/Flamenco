@@ -10,10 +10,11 @@
 
 #include "util.h"
 #include "lamport.h"
+#include "common_variables.h"
 /* boolean */
 #define TRUE 1
 #define FALSE 0
-#define SEC_IN_STATE 1
+#define SEC_IN_STATE 2
 #define STATE_CHANGE_PROB 10
 
 #define ROOT 0
@@ -21,9 +22,13 @@
 /* tutaj TYLKO zapowiedzi - definicje w main.c */
 extern int rank;
 extern int size;
+extern int nGuitarists;
+extern int nDancers;
+extern int nCritics;
+extern int nRooms;
 extern int ackCount;
+extern Role role;
 extern pthread_t threadKom;
-
 
 
 

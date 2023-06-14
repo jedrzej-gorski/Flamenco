@@ -12,19 +12,18 @@ void checkCriticalSectionCondition() {
     if (getFirstSource(&requestQueue) == rank && ackCount == size) {
         debug("Mogę wejść")
         printRequestQueue(&requestQueue);
-        canEnter = 1;
+        // canEnter = 1;
     }
 }
 
-void *startKomWatek(void *ptr)
+void *startKomWatekG(void *ptr)
 {
+    gArgs* args = (gArgs*)ptr;
     MPI_Status status;
     int is_message = FALSE;
     packet_t pakiet;
     /* Obrazuje pętlę odbierającą pakiety o różnych typach */
-    while ( stan!=InFinish ) {
-	    debug("czekam na recv");
-        
+    while (1) {
         MPI_Recv( &pakiet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
         
         pthread_mutex_lock(&clockMutex);
@@ -32,11 +31,27 @@ void *startKomWatek(void *ptr)
         pthread_mutex_unlock(&clockMutex);
 
         switch ( status.MPI_TAG ) {
-	    case REQUEST:
+	    case G_GD_COMM:
         {
-            add(&requestQueue, status.MPI_SOURCE, pakiet.ts);
-            debug("Ktoś coś prosi. A niech ma!")
-		    sendPacket( 0, status.MPI_SOURCE, ACK );
+            switch (pakiet.data) {
+                case REQUEST:
+                    if (status.MPI_SOURCE == rank) {
+                        args->REQ_CLOCK = pakiet.ts;
+                    }
+                    if (args->stan != G1_REQUEST && args->stan != G1_AWAIT && args->stan != G1_PAIR) {
+                        packet_t response;
+                        response.data = ACK;
+                        sendPacket(&response, status.MPI_SOURCE, G_GD_COMM);
+                    }
+                    break;
+                case RELEASE:
+                    pakiet.data = ACK;
+                    break;
+
+            }
+            pthread_mutex_lock(&args->msgListGDMut);
+            args->MSG_LIST_GD[status.MPI_SOURCE] = pakiet;
+            pthread_mutex_unlock(&args->msgListGDMut);
             break;
         }
 	    case ACK:
@@ -57,4 +72,11 @@ void *startKomWatek(void *ptr)
 	    break;
         }
     }
+}
+
+void *startKomWatekD(void *ptr) {
+}
+
+void *startKomWatekC(void *ptr) {
+
 }

@@ -2,12 +2,6 @@
 #include "util.h"
 MPI_Datatype MPI_PAKIET_T;
 
-/* 
- * w util.h extern state_t stan (czyli zapowiedź, że gdzieś tam jest definicja
- * tutaj w util.c state_t stan (czyli faktyczna definicja)
- */
-state_t stan=InRun;
-
 /* zamek wokół zmiennej współdzielonej między wątkami. 
  * Zwróćcie uwagę, że każdy proces ma osobą pamięć, ale w ramach jednego
  * procesu wątki współdzielą zmienne - więc dostęp do nich powinien
@@ -18,8 +12,7 @@ pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;
 struct tagNames_t{
     const char *name;
     int tag;
-} tagNames[] = { { "pakiet aplikacyjny", APP_PKT }, { "finish", FINISH}, 
-                { "potwierdzenie", ACK}, {"prośbę o sekcję krytyczną", REQUEST}, {"zwolnienie sekcji krytycznej", RELEASE} };
+} tagNames[] = { {"pustą wiadomość", EMPTY}, { "potwierdzenie", ACK}, {"prośbę", REQUEST}, {"zwolnienie", RELEASE} };
 
 const char *const tag2string( int tag )
 {
@@ -67,13 +60,66 @@ void sendPacket(packet_t *pkt, int destination, int tag)
     if (freepkt) free(pkt);
 }
 
-void changeState( state_t newState )
+void changeStateGuitarist(state_g *currentState, state_g newState)
 {
     pthread_mutex_lock( &stateMut );
-    if (stan==InFinish) { 
-	    pthread_mutex_unlock( &stateMut );
-        return;
-    }
-    stan = newState;
+    *currentState = newState;
     pthread_mutex_unlock( &stateMut );
+}
+
+void changeStateDancer(state_d *currentState, state_d newState)
+{
+    pthread_mutex_lock( &stateMut );
+    *currentState = newState;
+    pthread_mutex_unlock( &stateMut );
+}
+
+void changeStateCritic(state_c *currentState, state_c newState)
+{
+    pthread_mutex_lock( &stateMut );
+    *currentState = newState;
+    pthread_mutex_unlock( &stateMut );
+}
+
+state_g accessStateGuitarist(state_g *currentState) {
+    pthread_mutex_lock(&stateMut);
+    state_g stateValue = *currentState;
+    pthread_mutex_unlock(&stateMut);
+    return stateValue;
+}
+
+state_g accessStateGuitarist(state_g *currentState) {
+    pthread_mutex_lock(&stateMut);
+    state_g stateValue = *currentState;
+    pthread_mutex_unlock(&stateMut);
+    return stateValue;
+}
+
+state_g accessStateGuitarist(state_g *currentState) {
+    pthread_mutex_lock(&stateMut);
+    state_g stateValue = *currentState;
+    pthread_mutex_unlock(&stateMut);
+    return stateValue;
+}
+
+void setMsgListToEmpty(packet_t* msgList, int length) {
+    for (int i = 0; i < length; i++) {
+        packet_t newPacket;
+        newPacket.ts = 0;
+        newPacket.data = EMPTY;
+        newPacket.src = i;
+        msgList[i] = newPacket;
+    }
+}
+
+void initalizeSIArray(short int* array, int length) {
+    for (int i = 0; i < length; i++) {
+        array[i] = 0;
+    }
+}
+
+void initializeIArray(int* array, int length) {
+    for (int i = 0; i < length; i++) {
+        array[i] = 0;
+    }
 }

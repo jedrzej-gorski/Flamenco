@@ -11,9 +11,11 @@
  * ale zob util.c oraz util.h - zmienną state_t state i funkcję changeState
  *
  */
-int rank, size;
+int rank, size, nGuitarists, nDancers, nCritics;
+int nRooms;
 int ackCount = 0;
 RequestQueue requestQueue;
+Role role;
 int* msgClock;
 volatile int canEnter = 0;
 /* 
@@ -76,6 +78,16 @@ void attach_debugger() {
 
 int main(int argc, char **argv)
 {
+    if (argc < 8) {
+        fprintf(stderr, "Za mało argumentów\n");
+        exit(-1);
+    }
+    else {
+        nRooms = atoi(argv[argc - 1]);
+        nCritics = atoi(argv[argc - 2]);
+        nDancers = atoi(argv[argc - 3]);
+        nGuitarists = atoi(argv[argc - 4]);
+    }
     MPI_Status status;
     int provided;
     MPI_Init_thread(&argc, &argv, MPI_THREAD_MULTIPLE, &provided);
@@ -84,13 +96,60 @@ int main(int argc, char **argv)
     // zob. util.c oraz util.h
     inicjuj_typ_pakietu(); // tworzy typ pakietu
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+    if (nCritics + nDancers + nGuitarists != size) {
+        fprintf(stderr, "Niepoprawny rozkład ról\n");
+        exit(-1);
+    }
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
-    msgClock = (int*)malloc(sizeof(size) * size);
+    msgClock = (int*)malloc(sizeof(int) * size);
     initRequestQueue(&requestQueue, 5);
 
-    pthread_create(&threadKom, NULL, startKomWatek , 0);
-
+    if (rank < nGuitarists) {
+        // Zadeklaruj i alokuj pamięć strukturom istotnym dla danej roli
+        gArgs arguments;
+        arguments.MSG_LIST_GD = (packet_t*)malloc(sizeof(packet_t) * nGuitarists);
+        setMsgListToEmpty(&arguments.MSG_LIST_GD, nGuitarists);
+        arguments.MSG_LIST_GC = (packet_t*)malloc(sizeof(packet_t) * nGuitarists);
+        setMsgListToEmpty(&arguments.MSG_LIST_GC, nGuitarists);
+        arguments.MSG_LIST_VENUE = (short int*)malloc(sizeof(short int) * nGuitarists);
+        initializeSIArray(&arguments.MSG_LIST_VENUE, nGuitarists);
+        arguments.VENUE_REQ_QUEUE = (int*)malloc(sizeof(int) * nGuitarists);
+        initializeIArray(&arguments.VENUE_REQ_QUEUE, nGuitarists);
+        arguments.G_PAIR_C = -1;
+        arguments.G_PAIR_D = -1;
+        arguments.REQ_CLOCK = -1;
+        arguments.VENUE_INDEX = -1;
+        arguments.stan = G1_REQUEST;
+        arguments.VENUE_LIST = (short int*)malloc(sizeof(short int) * nRooms);
+        initializeSIArray(&arguments.VENUE_LIST, nRooms);
+        pthread_mutex_init(&arguments.msgListGDMut, NULL);
+        pthread_mutex_init(&arguments.msgListGCMut, NULL);
+        pthread_mutex_init(&arguments.msgListVMut, NULL);
+        pthread_mutex_init(&arguments.venueReqQueueMut, NULL);
+        pthread_create(&threadKom, NULL, startKomWatekG , (void*)&arguments);
+        mainLoopGuitarist(&arguments);
+    }
+    else if (rank < nGuitarists + nDancers) {
+        dArgs arguments;
+        arguments.MSG_LIST_GD = (packet_t*)malloc(sizeof(packet_t) * nDancers);
+        arguments.D_PAIR_G = -1;
+        arguments.REQ_CLOCK = -1;
+        arguments.stan = D_REQUEST;
+        arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
+        pthread_create(&threadKom, NULL, startKomWatekD , (void*)&arguments);
+        mainLoopDancer(&arguments);
+    }
+    else {
+        cArgs arguments;
+        arguments.MSG_LIST_GC = (packet_t*)malloc(sizeof(packet_t) * nCritics);
+        arguments.C_PAIR_G = -1;
+        arguments.REQ_CLOCK = -1;
+        arguments.stan = C_REQUEST;
+        arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
+        pthread_create(&threadKom, NULL, startKomWatekC , (void*)&arguments);
+        mainLoopCritic(&arguments);
+    }
     // mainLoop w watek_glowny.c 
     mainLoop();
     

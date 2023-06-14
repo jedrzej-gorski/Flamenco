@@ -1,3 +1,3 @@
 #include "util.h"
 
-packet_t* MSG_LIST_GD;
+typedef enum {GUITARIST, DANCER, CRITIC} Role;
