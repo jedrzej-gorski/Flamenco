@@ -1,4 +1,5 @@
 #include "request_queue.h"
+#include "util.h"
 
 void initRequestQueue(RequestQueue* queue, int capacity) {
     queue->items = (Request*)malloc(capacity * sizeof(Request));
@@ -61,12 +62,21 @@ int getFirstSource(RequestQueue* queue) {
     }
 }
 
-void printRequestQueue(RequestQueue* queue) {
-    printf("RequestQueue Contents:\n");
+int getPosition(RequestQueue* queue, int source) {
     for (int i = 0; i < queue->size; i++) {
-        printf("Item %d: Source = %d, Clock = %d\n", i, queue->items[i].source, queue->items[i].clock);
+        if (queue->items[i].source == source) {
+            return i;
+        }
     }
-    printf("\n");
+
+    return queue->size;
+}
+
+void printRequestQueue(RequestQueue* queue) {
+    debug("RequestQueue Contents:\n");
+    for (int i = 0; i < queue->size; i++) {
+        debug("Item %d: Source = %d, Clock = %d\n", i, queue->items[i].source, queue->items[i].clock);
+    }
 }
 
 void freeRequestQueue(RequestQueue* queue) {

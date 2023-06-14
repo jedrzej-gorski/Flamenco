@@ -125,6 +125,8 @@ int main(int argc, char **argv)
         // Zadeklaruj i alokuj pamięć strukturom istotnym dla danej roli
         gArgs arguments;
 
+        arguments.request_queue_gd = (RequestQueue*)malloc(sizeof(RequestQueue));
+        initRequestQueue(arguments.request_queue_gd, 5);
         arguments.MSG_LIST_GD = (packet_t*)malloc(sizeof(packet_t) * nGuitarists);
         setMsgListToEmpty(arguments.MSG_LIST_GD, nGuitarists);
         arguments.MSG_LIST_GC = (packet_t*)malloc(sizeof(packet_t) * nGuitarists);

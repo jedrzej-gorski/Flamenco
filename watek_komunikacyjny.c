@@ -26,24 +26,21 @@ int isBetter(packet_t p1, packet_t p2) {
     return 0;
 }
 
-void checkProceedConditionG(gArgs* args) {
-    switch (state)
-    {
+void checkStateChangeConditionsG(gArgs* args) {
+    switch (state) {
         case G1_REQUEST: {
-            changeState(G1_AWAIT);
+            // czeka, dopóki własne request nie znajdzie się w kolejce
+            if (getPosition(args->request_queue_gd, rank) != args->request_queue_gd->size) {
+                changeState(G1_AWAIT);
+            }
             break;
         }
         case G1_AWAIT: {
-            // Czeka, dopóki nie otrzyma ACK lub REQ o lepszym priorytecie od każdego innego gitarzysty
-            int checkCondition = 1;
-            for (int i = 0; i < nGuitarists; i++) {
-                if (!(args->MSG_LIST_GD[i].data == ACK && args->MSG_LIST_GD[i].ts > args->REQ_CLOCK) && !(args->MSG_LIST_GD[i].data == REQUEST))  {
-                    checkCondition = 0;
-                    break;
-                }
-            }
-            
-            if (checkCondition) {
+            // czeka dopóki nie dostanie ACK od wszystkich gitarzystow
+            // oraz dopóki w kojece nie znajdzie się na pozycji niewiększej niż liczba tancerek
+            if (args->ACK_COUNT_GD == nGuitarists && getPosition(args->request_queue_gd, rank) <= nDancers) {
+                debug("zegrano %d/%d", args->ACK_COUNT_GD, nGuitarists);
+                printRequestQueue(args->request_queue_gd);
                 changeState(G1_PAIR);
             }
             break;
@@ -69,34 +66,34 @@ void *startKomWatekG(void *ptr)
         pthread_mutex_unlock(&clockMutex);
 
         switch ( status.MPI_TAG ) {
-	    case G_GD_COMM:
-        {
-            switch (pakiet.data) {
-                case REQUEST:
-                    if (status.MPI_SOURCE == rank) {
-                        args->REQ_CLOCK = pakiet.ts;
-                    }
-                    if (state != G1_REQUEST && state != G1_AWAIT && state != G1_PAIR) {
+            case G_GD_COMM: {
+                switch (pakiet.data) {
+                    case REQUEST: {
+                        add(args->request_queue_gd, status.MPI_SOURCE, pakiet.ts);
+
                         packet_t response;
                         response.data = ACK;
                         sendPacket(&response, status.MPI_SOURCE, G_GD_COMM);
+                        break;
                     }
-                    break;
-                case RELEASE:
-                    pakiet.data = ACK;
-                    break;
+                    case ACK: {
+                        args->ACK_COUNT_GD++;
+                        break;
+                    }
+                    case RELEASE: {
+                        removeItem(args->request_queue_gd, status.MPI_SOURCE);
+                        break;
+                    }
 
+                }
+                break;
             }
-            pthread_mutex_lock(&args->msgListGDMut);
-            args->MSG_LIST_GD[status.MPI_SOURCE] = pakiet;
-            pthread_mutex_unlock(&args->msgListGDMut);
-            break;
-        }
-	    default:
-	        break;
+            default: {
+                break;
+            }
         }
 
-        checkProceedConditionG(args); // każda wiadomość może potencjalnie wybudzić wątek główny
+        checkStateChangeConditionsG(args); // każda wiadomość może potencjalnie wybudzić wątek główny
     }
 }
 

@@ -5,7 +5,7 @@ MPI_Datatype MPI_PAKIET_T;
 struct tagNames_t{
     const char *name;
     int tag;
-} tagNames[] = { {"pustą wiadomość", EMPTY}, { "potwierdzenie", ACK}, {"prośbę", REQUEST}, {"zwolnienie", RELEASE} };
+} tagNames[] = { {"EMPTY", EMPTY}, { "ACK", ACK}, {"REQUEST", REQUEST}, {"RELEASE", RELEASE} };
 
 const char *const tag2string( int tag )
 {
@@ -36,18 +36,13 @@ void inicjuj_typ_pakietu()
     MPI_Type_commit(&MPI_PAKIET_T);
 }
 
-/* opis patrz util.h */
-void sendPacket(packet_t *pkt, int destination, int tag)
+void sendPacketNoClockInc(packet_t *pkt, int destination, int tag)
 {
     int freepkt=0;
     if (pkt==0) { pkt = malloc(sizeof(packet_t)); freepkt=1;}
     pkt->src = rank;
-
-    pthread_mutex_lock(&clockMutex);
-    ++lamport;
-    pthread_mutex_unlock(&clockMutex);
-
     pkt->ts = lamport;
+
     if (tag == G1_PAIR) {
         debug("Wysyłam, że jestem na pozycji %d do tancerki %d\n", pkt->data, destination);
     }
@@ -58,9 +53,50 @@ void sendPacket(packet_t *pkt, int destination, int tag)
     if (freepkt) free(pkt);
 }
 
+/* opis patrz util.h */
+void sendPacket(packet_t *pkt, int destination, int tag)
+{
+    int freepkt=0;
+    if (pkt==0) { pkt = malloc(sizeof(packet_t)); freepkt=1;}
+    pkt->src = rank;
+
+    pthread_mutex_lock(&clockMutex);
+    ++lamport;
+    pthread_mutex_unlock(&clockMutex);
+    pkt->ts = lamport;
+
+    if (tag == G1_PAIR) {
+        debug("Wysyłam, że jestem na pozycji %d do tancerki %d\n", pkt->data, destination);
+    }
+    else {
+        debug("Wysyłam %s do %d\n", tag2string(pkt->data), destination);
+    }
+    MPI_Send( pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
+    if (freepkt) free(pkt);
+}
+
+void sendPackets(packet_t *pkt, int destinationStart, int destinationEnd, int tag)
+{
+    pthread_mutex_lock(&clockMutex);
+    ++lamport;
+    for (int i = destinationStart; i < destinationEnd; i++) {
+        if (pkt != 0) {
+            packet_t *pktCpy = malloc(sizeof(packet_t));
+            memcpy(pktCpy, pkt, sizeof(packet_t));
+
+            sendPacketNoClockInc(pktCpy, i, tag);
+        }
+        else {
+            sendPacketNoClockInc(pkt, i, tag);
+        }
+    }
+    pthread_mutex_unlock(&clockMutex);
+}
+
 void changeState(int newState)
 {
     pthread_mutex_lock( &stateMutex );
+    debug("Zmieniam stan z %d na %d", state, newState);
     state = newState;
     pthread_cond_signal(&stateCond);
     pthread_mutex_unlock( &stateMutex );

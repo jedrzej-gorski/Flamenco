@@ -20,6 +20,8 @@ typedef enum {C_REQUEST, C_AWAIT, C_PAIR, C_PASSIVE} state_c;
 
 /* struktury przechowujące argumenty */
 typedef struct {
+    RequestQueue* request_queue_gd;
+    int ACK_COUNT_GD;
     packet_t* MSG_LIST_GD;
     packet_t* MSG_LIST_GC;
     short int* MSG_LIST_VENUE;
@@ -75,6 +77,7 @@ void inicjuj_typ_pakietu();
 
 /* wysyłanie pakietu, skrót: wskaźnik do pakietu (0 oznacza stwórz pusty pakiet), do kogo, z jakim typem */
 void sendPacket(packet_t *pkt, int destination, int tag);
+void sendPackets(packet_t *pkt, int destinationStart, int destinationEnd, int tag);
 
 extern pthread_mutex_t stateMut;
 /* zmiana stanu, obwarowana muteksem */

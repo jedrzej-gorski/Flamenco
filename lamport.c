@@ -1,4 +1,4 @@
 #include "main.h"
 
-int lamport;
+int lamport = 0;
 pthread_mutex_t clockMutex = PTHREAD_MUTEX_INITIALIZER;

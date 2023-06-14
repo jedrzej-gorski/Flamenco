@@ -29,6 +29,9 @@ void removeItem(RequestQueue* queue, int source);
 // Function to get the source of the first item in the RequestQueue
 int getFirstSource(RequestQueue* queue);
 
+// Function to get the position of a specific source in the RequestQueue
+int getPosition(RequestQueue* queue, int source);
+
 // Function to print the contents of the RequestQueue
 void printRequestQueue(RequestQueue* queue);
 
