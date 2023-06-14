@@ -2,13 +2,6 @@
 #include "util.h"
 MPI_Datatype MPI_PAKIET_T;
 
-/* zamek wokół zmiennej współdzielonej między wątkami. 
- * Zwróćcie uwagę, że każdy proces ma osobą pamięć, ale w ramach jednego
- * procesu wątki współdzielą zmienne - więc dostęp do nich powinien
- * być obwarowany muteksami
- */
-pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;
-
 struct tagNames_t{
     const char *name;
     int tag;
@@ -65,46 +58,12 @@ void sendPacket(packet_t *pkt, int destination, int tag)
     if (freepkt) free(pkt);
 }
 
-void changeStateGuitarist(state_g *currentState, state_g newState)
+void changeState(int newState)
 {
-    pthread_mutex_lock( &stateMut );
-    *currentState = newState;
-    pthread_mutex_unlock( &stateMut );
-}
-
-void changeStateDancer(state_d *currentState, state_d newState)
-{
-    pthread_mutex_lock( &stateMut );
-    *currentState = newState;
-    pthread_mutex_unlock( &stateMut );
-}
-
-void changeStateCritic(state_c *currentState, state_c newState)
-{
-    pthread_mutex_lock( &stateMut );
-    *currentState = newState;
-    pthread_mutex_unlock( &stateMut );
-}
-
-state_g accessStateGuitarist(state_g *currentState) {
-    pthread_mutex_lock(&stateMut);
-    state_g stateValue = *currentState;
-    pthread_mutex_unlock(&stateMut);
-    return stateValue;
-}
-
-state_g accessStateDancer(state_g *currentState) {
-    pthread_mutex_lock(&stateMut);
-    state_g stateValue = *currentState;
-    pthread_mutex_unlock(&stateMut);
-    return stateValue;
-}
-
-state_g accessStateCritic(state_g *currentState) {
-    pthread_mutex_lock(&stateMut);
-    state_g stateValue = *currentState;
-    pthread_mutex_unlock(&stateMut);
-    return stateValue;
+    pthread_mutex_lock( &stateMutex );
+    state = newState;
+    pthread_cond_signal(&stateCond);
+    pthread_mutex_unlock( &stateMutex );
 }
 
 void setMsgListToEmpty(packet_t* msgList, int length) {

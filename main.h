@@ -27,9 +27,9 @@ extern int nCritics;
 extern int nRooms;
 extern int ackCount;
 extern pthread_t threadKom;
-extern int canProceed;
-extern pthread_cond_t canProceedCond;
-extern pthread_mutex_t canProceedMutex;
+extern int state;
+extern pthread_cond_t stateCond;
+extern pthread_mutex_t stateMutex;
 
 
 

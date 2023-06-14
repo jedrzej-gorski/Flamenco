@@ -16,9 +16,9 @@ int nRooms;
 int ackCount = 0;
 RequestQueue requestQueue;
 int* msgClock;
-int canProceed = 0;
-pthread_cond_t canProceedCond = PTHREAD_COND_INITIALIZER;
-pthread_mutex_t canProceedMutex = PTHREAD_MUTEX_INITIALIZER;
+int state = 0;
+pthread_cond_t stateCond = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t stateMutex = PTHREAD_MUTEX_INITIALIZER;
 
 /* 
  * Każdy proces ma dwa wątki - główny i komunikacyjny
@@ -33,7 +33,7 @@ void finalizuj()
 {
     free(msgClock);
     freeRequestQueue(&requestQueue);
-    pthread_mutex_destroy(&stateMut);
+    pthread_mutex_destroy(&stateMutex);
     pthread_mutex_destroy(&clockMutex);
     /* Czekamy, aż wątek potomny się zakończy */
     println("czekam na wątek \"komunikacyjny\"\n" );
@@ -137,7 +137,6 @@ int main(int argc, char **argv)
         arguments.G_PAIR_D = -1;
         arguments.REQ_CLOCK = -1;
         arguments.VENUE_INDEX = -1;
-        arguments.stan = G1_REQUEST;
         arguments.VENUE_LIST = (short int*)malloc(sizeof(short int) * nRooms);
         initializeSIArray(arguments.VENUE_LIST, nRooms);
         pthread_mutex_init(&arguments.msgListGDMut, NULL);
@@ -154,7 +153,6 @@ int main(int argc, char **argv)
         setMsgListToEmpty(arguments.MSG_LIST_GD, nDancers);
         arguments.D_PAIR_G = -1;
         arguments.REQ_CLOCK = -1;
-        arguments.stan = D_REQUEST;
         arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
         initializeIArray(arguments.START_TIMESTAMP, nGuitarists);
         pthread_create(&threadKom, NULL, startKomWatekD , (void*)&arguments);
@@ -167,7 +165,6 @@ int main(int argc, char **argv)
         setMsgListToEmpty(arguments.MSG_LIST_GC, nCritics);
         arguments.C_PAIR_G = -1;
         arguments.REQ_CLOCK = -1;
-        arguments.stan = C_REQUEST;
         arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
         initializeIArray(arguments.START_TIMESTAMP, nGuitarists);
         pthread_create(&threadKom, NULL, startKomWatekC , (void*)&arguments);

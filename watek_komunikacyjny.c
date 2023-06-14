@@ -27,8 +27,12 @@ int isBetter(packet_t p1, packet_t p2) {
 }
 
 void checkProceedConditionG(gArgs* args) {
-    switch (args->stan)
+    switch (state)
     {
+        case G1_REQUEST: {
+            changeState(G1_AWAIT);
+            break;
+        }
         case G1_AWAIT: {
             // Czeka, dopóki nie otrzyma ACK lub REQ o lepszym priorytecie od każdego innego gitarzysty
             int checkCondition = 1;
@@ -38,12 +42,9 @@ void checkProceedConditionG(gArgs* args) {
                     break;
                 }
             }
-            debug("checkProceedConditionG(G1_AWAIT): %d", checkCondition);
+            
             if (checkCondition) {
-                pthread_mutex_lock(&canProceedMutex);
-                canProceed = 1;
-                pthread_cond_signal(&canProceedCond);
-                pthread_mutex_unlock(&canProceedMutex);
+                changeState(G1_PAIR);
             }
             break;
         }
@@ -75,7 +76,7 @@ void *startKomWatekG(void *ptr)
                     if (status.MPI_SOURCE == rank) {
                         args->REQ_CLOCK = pakiet.ts;
                     }
-                    if (args->stan != G1_REQUEST && args->stan != G1_AWAIT && args->stan != G1_PAIR) {
+                    if (state != G1_REQUEST && state != G1_AWAIT && state != G1_PAIR) {
                         packet_t response;
                         response.data = ACK;
                         sendPacket(&response, status.MPI_SOURCE, G_GD_COMM);

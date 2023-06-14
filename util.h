@@ -35,7 +35,6 @@ typedef struct {
     pthread_mutex_t msgListGCMut;
     pthread_mutex_t msgListVMut;
     pthread_mutex_t venueReqQueueMut;
-    state_g stan;
 } gArgs;
 
 typedef struct {
@@ -43,7 +42,6 @@ typedef struct {
     int D_PAIR_G;
     int REQ_CLOCK;
     int* START_TIMESTAMP;
-    state_d stan;
 } dArgs;
 
 typedef struct {
@@ -51,7 +49,6 @@ typedef struct {
     int C_PAIR_G;
     int REQ_CLOCK;
     int* START_TIMESTAMP;
-    state_c stan;
 } cArgs;
 
 /* Treści wiadomości */
@@ -81,9 +78,7 @@ void sendPacket(packet_t *pkt, int destination, int tag);
 
 extern pthread_mutex_t stateMut;
 /* zmiana stanu, obwarowana muteksem */
-void changeStateGuitarist(state_g *currentState, state_g newState);
-void changeStateDancer(state_d *currentState, state_d newState);
-void changeStateCritic(state_c *currentState, state_c newState);
+void changeState(int newState);
 
 void setMsgListToEmpty(packet_t* msgList, int length);
 void initializeSIArray(short int* array, int length);
