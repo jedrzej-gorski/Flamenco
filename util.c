@@ -55,7 +55,12 @@ void sendPacket(packet_t *pkt, int destination, int tag)
     pthread_mutex_unlock(&clockMutex);
 
     pkt->ts = lamport;
-    debug("Wysyłam %s do %d\n", tag2string( tag), destination);
+    if (tag == G1_PAIR) {
+        debug("Wysyłam, że jestem na pozycji %d do tancerki %d\n", pkt->data, destination);
+    }
+    else {
+        debug("Wysyłam %s do %d\n", tag2string(pkt->data), destination);
+    }
     MPI_Send( pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     if (freepkt) free(pkt);
 }
@@ -121,5 +126,26 @@ void initializeSIArray(short int* array, int length) {
 void initializeIArray(int* array, int length) {
     for (int i = 0; i < length; i++) {
         array[i] = 0;
+    }
+}
+
+void printSIArray(short int* array, int length, const char* name) {
+    debug("Zawartość tablicy %s:\n", name);
+    for (int i = 0; i < length; i++) {
+        debug("%d: %d\n", i, array[i]);
+    }
+}
+
+void printIArray(int* array, int length, const char* name) {
+    debug("Zawartość tablicy %s:\n", name);
+    for (int i = 0; i < length; i++) {
+        debug("%d: %d\n", i, array[i]);
+    }
+}
+
+void printMSGArray(packet_t* array, int length, const char* name) {
+    debug("Zawartość tablicy %s[%d]:\n", name, length);
+    for (int i = 0; i < length; i++) {
+        debug("%d: ts=%d src=%d data=%d\n", i, array[i].ts, array[i].src, array[i].data);
     }
 }

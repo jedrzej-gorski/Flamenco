@@ -10,7 +10,6 @@
 
 #include "util.h"
 #include "lamport.h"
-#include "common_variables.h"
 /* boolean */
 #define TRUE 1
 #define FALSE 0
@@ -27,7 +26,6 @@ extern int nDancers;
 extern int nCritics;
 extern int nRooms;
 extern int ackCount;
-extern Role role;
 extern pthread_t threadKom;
 
 

@@ -7,8 +7,7 @@
 typedef struct {
     int ts;       /* timestamp (zegar lamporta */
     int src;  
-
-    int data;     /* przykładowe pole z danymi; można zmienić nazwę na bardziej pasującą */
+    int data;   /* teść wiadomości np. ACK lub turnNo */
 } packet_t;
 /* packet_t ma trzy pola, więc NITEMS=3. Wykorzystane w inicjuj_typ_pakietu */
 #define NITEMS 3
@@ -44,7 +43,7 @@ typedef struct {
     int D_PAIR_G;
     int REQ_CLOCK;
     int* START_TIMESTAMP;
-    state_d* stan;
+    state_d stan;
 } dArgs;
 
 typedef struct {
@@ -52,7 +51,7 @@ typedef struct {
     int C_PAIR_G;
     int REQ_CLOCK;
     int* START_TIMESTAMP;
-    state_c* stan;
+    state_c stan;
 } cArgs;
 
 /* Treści wiadomości */
@@ -85,6 +84,13 @@ extern pthread_mutex_t stateMut;
 void changeStateGuitarist(state_g *currentState, state_g newState);
 void changeStateDancer(state_d *currentState, state_d newState);
 void changeStateCritic(state_c *currentState, state_c newState);
+
+void setMsgListToEmpty(packet_t* msgList, int length);
+void initializeSIArray(short int* array, int length);
+void initializeIArray(int* array, int length);
+void printSIArray(short int* array, int length, const char* name);
+void printIArray(int* array, int length, const char* name);
+void printMSGArray(packet_t* array, int length, const char* name);
 
 extern RequestQueue requestQueue;
 extern int* msgClock;

@@ -21,6 +21,7 @@ void mainLoopGuitarist(gArgs* args)
 				debug("Czekam na REQ lub ACK od innych gitarzystów");
 				pthread_mutex_lock(&args->msgListGDMut);
 				int canProceed = 1;
+				printMSGArray(args->MSG_LIST_GD, nGuitarists, "args->MSG_LIST_GD");
 				for (int i = 0; i < nGuitarists; i++) {
 					if (!(args->MSG_LIST_GD[i].data == ACK && args->MSG_LIST_GD[i].ts > args->REQ_CLOCK) && !(args->MSG_LIST_GD[i].data == REQUEST))  {
 						canProceed = 0;
@@ -36,6 +37,7 @@ void mainLoopGuitarist(gArgs* args)
 				debug("Dobieram się w parę z tancerką");
 				pthread_mutex_lock(&args->msgListGDMut);
 				int turnNo = 0;
+				printMSGArray(args->MSG_LIST_GD, nGuitarists, "args->MSG_LIST_GD");
 				for (int i = 0; i < nGuitarists; i++) {
 					if (args->MSG_LIST_GD[i].data == REQUEST && args->MSG_LIST_GD[i].ts <= args->REQ_CLOCK) {
 						turnNo += 1;
@@ -56,9 +58,49 @@ void mainLoopGuitarist(gArgs* args)
 }
 
 void mainLoopDancer(dArgs* args) {
+	while (1) {
+		switch (args->stan) {
+			case D_REQUEST: {
+				break;
+			}
+			case D_AWAIT: {
+				break;
+			}
+			case D_PAIR: {
+				break;
+			}
+			case D_PASSIVE: {
+				break;
+			}
+			default: {
+				break;
+			}
+		}
 
+		sleep(SEC_IN_STATE);
+	}
 }
 
 void mainLoopCritic(cArgs* args) {
+	while (1) {
+		switch (args->stan) {
+			case C_REQUEST: {
+				break;
+			}
+			case C_AWAIT: {
+				break;
+			}
+			case C_PAIR: {
+				break;
+			}
+			case C_PASSIVE: {
+				break;
+			}
+			default: {
+				break;
+			}
+		}
 
+		sleep(SEC_IN_STATE);
+	}
 }

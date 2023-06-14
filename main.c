@@ -15,7 +15,6 @@ int rank, size, nGuitarists, nDancers, nCritics;
 int nRooms;
 int ackCount = 0;
 RequestQueue requestQueue;
-Role role;
 int* msgClock;
 volatile int canEnter = 0;
 /* 
@@ -122,21 +121,22 @@ int main(int argc, char **argv)
     if (rank < nGuitarists) {
         // Zadeklaruj i alokuj pamięć strukturom istotnym dla danej roli
         gArgs arguments;
+
         arguments.MSG_LIST_GD = (packet_t*)malloc(sizeof(packet_t) * nGuitarists);
-        setMsgListToEmpty(&arguments.MSG_LIST_GD, nGuitarists);
+        setMsgListToEmpty(arguments.MSG_LIST_GD, nGuitarists);
         arguments.MSG_LIST_GC = (packet_t*)malloc(sizeof(packet_t) * nGuitarists);
-        setMsgListToEmpty(&arguments.MSG_LIST_GC, nGuitarists);
+        setMsgListToEmpty(arguments.MSG_LIST_GC, nGuitarists);
         arguments.MSG_LIST_VENUE = (short int*)malloc(sizeof(short int) * nGuitarists);
-        initializeSIArray(&arguments.MSG_LIST_VENUE, nGuitarists);
+        initializeSIArray(arguments.MSG_LIST_VENUE, nGuitarists);
         arguments.VENUE_REQ_QUEUE = (int*)malloc(sizeof(int) * nGuitarists);
-        initializeIArray(&arguments.VENUE_REQ_QUEUE, nGuitarists);
+        initializeIArray(arguments.VENUE_REQ_QUEUE, nGuitarists);
         arguments.G_PAIR_C = -1;
         arguments.G_PAIR_D = -1;
         arguments.REQ_CLOCK = -1;
         arguments.VENUE_INDEX = -1;
         arguments.stan = G1_REQUEST;
         arguments.VENUE_LIST = (short int*)malloc(sizeof(short int) * nRooms);
-        initializeSIArray(&arguments.VENUE_LIST, nRooms);
+        initializeSIArray(arguments.VENUE_LIST, nRooms);
         pthread_mutex_init(&arguments.msgListGDMut, NULL);
         pthread_mutex_init(&arguments.msgListGCMut, NULL);
         pthread_mutex_init(&arguments.msgListVMut, NULL);
@@ -148,10 +148,12 @@ int main(int argc, char **argv)
     else if (rank < nGuitarists + nDancers) {
         dArgs arguments;
         arguments.MSG_LIST_GD = (packet_t*)malloc(sizeof(packet_t) * nDancers);
+        setMsgListToEmpty(arguments.MSG_LIST_GD, nDancers);
         arguments.D_PAIR_G = -1;
         arguments.REQ_CLOCK = -1;
         arguments.stan = D_REQUEST;
         arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
+        initializeIArray(arguments.START_TIMESTAMP, nGuitarists);
         pthread_create(&threadKom, NULL, startKomWatekD , (void*)&arguments);
         
         mainLoopDancer(&arguments);
@@ -159,10 +161,12 @@ int main(int argc, char **argv)
     else {
         cArgs arguments;
         arguments.MSG_LIST_GC = (packet_t*)malloc(sizeof(packet_t) * nCritics);
+        setMsgListToEmpty(arguments.MSG_LIST_GC, nCritics);
         arguments.C_PAIR_G = -1;
         arguments.REQ_CLOCK = -1;
         arguments.stan = C_REQUEST;
         arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
+        initializeIArray(arguments.START_TIMESTAMP, nGuitarists);
         pthread_create(&threadKom, NULL, startKomWatekC , (void*)&arguments);
         
         mainLoopCritic(&arguments);
