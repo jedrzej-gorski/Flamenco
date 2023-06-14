@@ -16,6 +16,43 @@ void checkCriticalSectionCondition() {
     }
 }
 
+// czy p1 ma wiekszy priorytet od p2
+int isBetter(packet_t p1, packet_t p2) {
+    if (p1.ts < p2.ts)
+        return 1;
+    else if (p1.ts == p2.ts && p1.src < p2.src)
+        return 1;
+    
+    return 0;
+}
+
+void checkProceedConditionG(gArgs* args) {
+    switch (args->stan)
+    {
+        case G1_AWAIT: {
+            // Czeka, dopóki nie otrzyma ACK lub REQ o lepszym priorytecie od każdego innego gitarzysty
+            int checkCondition = 1;
+            for (int i = 0; i < nGuitarists; i++) {
+                if (!(args->MSG_LIST_GD[i].data == ACK && args->MSG_LIST_GD[i].ts > args->REQ_CLOCK) && !(args->MSG_LIST_GD[i].data == REQUEST))  {
+                    checkCondition = 0;
+                    break;
+                }
+            }
+            debug("checkProceedConditionG(G1_AWAIT): %d", checkCondition);
+            if (checkCondition) {
+                pthread_mutex_lock(&canProceedMutex);
+                canProceed = 1;
+                pthread_cond_signal(&canProceedCond);
+                pthread_mutex_unlock(&canProceedMutex);
+            }
+            break;
+        }
+        default: {
+            break;
+        }
+    }
+}
+
 void *startKomWatekG(void *ptr)
 {
     gArgs* args = (gArgs*)ptr;
@@ -54,23 +91,11 @@ void *startKomWatekG(void *ptr)
             pthread_mutex_unlock(&args->msgListGDMut);
             break;
         }
-	    case ACK:
-        {
-	        ackCount++; /* czy potrzeba tutaj muteksa? Będzie wyścig, czy nie będzie? Zastanówcie się. */
-            debug("Dostałem ACK od %d, mam już %d", status.MPI_SOURCE, ackCount);
-            checkCriticalSectionCondition();
+	    default:
 	        break;
         }
-        case RELEASE:
-        {
-            removeItem(&requestQueue, status.MPI_SOURCE);
-            debug("Dostałem RELEASE od %d", status.MPI_SOURCE);
-            checkCriticalSectionCondition();
-            break;
-        }
-	    default:
-	    break;
-        }
+
+        checkProceedConditionG(args); // każda wiadomość może potencjalnie wybudzić wątek główny
     }
 }
 

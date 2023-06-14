@@ -110,7 +110,7 @@ state_g accessStateCritic(state_g *currentState) {
 void setMsgListToEmpty(packet_t* msgList, int length) {
     for (int i = 0; i < length; i++) {
         packet_t newPacket;
-        newPacket.ts = 0;
+        newPacket.ts = -1;
         newPacket.data = EMPTY;
         newPacket.src = i;
         msgList[i] = newPacket;

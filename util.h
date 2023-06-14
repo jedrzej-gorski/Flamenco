@@ -95,6 +95,4 @@ void printMSGArray(packet_t* array, int length, const char* name);
 extern RequestQueue requestQueue;
 extern int* msgClock;
 
-extern volatile int canProceed; // should use conditional variable
-
 #endif

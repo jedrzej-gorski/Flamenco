@@ -80,19 +80,22 @@ ackCount	main.c	/^int ackCount = 0;$/;"	v
 add	request_queue.c	/^void add(RequestQueue* queue, int source, int clock) {$/;"	f
 attach_debugger	main.c	/^void attach_debugger() {$/;"	f
 cArgs	util.h	/^} cArgs;$/;"	t	typeref:struct:__anon9
-canEnter	main.c	/^volatile int canEnter = 0;$/;"	v
+canProceed	main.c	/^int canProceed = 0;$/;"	v
+canProceedCond	main.c	/^pthread_cond_t canProceedCond = PTHREAD_COND_INITIALIZER;$/;"	v
+canProceedMutex	main.c	/^pthread_mutex_t canProceedMutex = PTHREAD_MUTEX_INITIALIZER;$/;"	v
 capacity	request_queue.h	/^    int capacity;$/;"	m	struct:__anon2
 changeStateCritic	util.c	/^void changeStateCritic(state_c *currentState, state_c newState)$/;"	f
 changeStateDancer	util.c	/^void changeStateDancer(state_d *currentState, state_d newState)$/;"	f
 changeStateGuitarist	util.c	/^void changeStateGuitarist(state_g *currentState, state_g newState)$/;"	f
 checkCriticalSectionCondition	watek_komunikacyjny.c	/^void checkCriticalSectionCondition() {$/;"	f
+checkProceedConditionG	watek_komunikacyjny.c	/^void checkProceedConditionG(gArgs* args) {$/;"	f
 check_thread_support	main.c	/^void check_thread_support(int provided)$/;"	f
 clock	request_queue.h	/^    int clock;$/;"	m	struct:__anon1
 clockMutex	lamport.c	/^pthread_mutex_t clockMutex = PTHREAD_MUTEX_INITIALIZER;/;"	v
 dArgs	util.h	/^} dArgs;$/;"	t	typeref:struct:__anon8
 data	util.h	/^    int data;   \/* teść wiadomości np. ACK lub turnNo *\/$/;"	m	struct:__anon3
-debug	main.h	53;"	d
-debug	main.h	55;"	d
+debug	main.h	56;"	d
+debug	main.h	58;"	d
 finalizuj	main.c	/^void finalizuj()$/;"	f
 freeRequestQueue	request_queue.c	/^void freeRequestQueue(RequestQueue* queue) {$/;"	f
 gArgs	util.h	/^} gArgs;$/;"	t	typeref:struct:__anon7
@@ -101,6 +104,7 @@ inicjuj_typ_pakietu	util.c	/^void inicjuj_typ_pakietu()$/;"	f
 initRequestQueue	request_queue.c	/^void initRequestQueue(RequestQueue* queue, int capacity) {$/;"	f
 initializeIArray	util.c	/^void initializeIArray(int* array, int length) {$/;"	f
 initializeSIArray	util.c	/^void initializeSIArray(short int* array, int length) {$/;"	f
+isBetter	watek_komunikacyjny.c	/^int isBetter(packet_t p1, packet_t p2) {$/;"	f
 items	request_queue.h	/^    Request* items;$/;"	m	struct:__anon2
 lamport	lamport.c	/^int lamport;$/;"	v
 main	main.c	/^int main(int argc, char **argv)$/;"	f
@@ -123,7 +127,7 @@ printMSGArray	util.c	/^void printMSGArray(packet_t* array, int length, const cha
 printRequestQueue	request_queue.c	/^void printRequestQueue(RequestQueue* queue) {$/;"	f
 printSIArray	util.c	/^void printSIArray(short int* array, int length, const char* name) {$/;"	f
 print_startup_information	main.c	/^void print_startup_information() {$/;"	f
-println	main.h	59;"	d
+println	main.h	62;"	d
 rank	main.c	/^int rank, size, nGuitarists, nDancers, nCritics;$/;"	v
 removeItem	request_queue.c	/^void removeItem(RequestQueue* queue, int source) {$/;"	f
 requestQueue	main.c	/^RequestQueue requestQueue;$/;"	v

@@ -16,7 +16,10 @@ int nRooms;
 int ackCount = 0;
 RequestQueue requestQueue;
 int* msgClock;
-volatile int canEnter = 0;
+int canProceed = 0;
+pthread_cond_t canProceedCond = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t canProceedMutex = PTHREAD_MUTEX_INITIALIZER;
+
 /* 
  * Każdy proces ma dwa wątki - główny i komunikacyjny
  * w plikach, odpowiednio, watek_glowny.c oraz (siurpryza) watek_komunikacyjny.c
