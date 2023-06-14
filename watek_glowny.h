@@ -2,6 +2,8 @@
 #define WATEK_GLOWNY_H
 
 /* pętla główna aplikacji: zmiany stanów itd */
-void mainLoop();
+void mainLoopGuitarist(gArgs* args);
+void mainLoopDancer(dArgs* args);
+void mainLoopCritic(cArgs* args);
 
 #endif

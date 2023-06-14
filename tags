@@ -4,85 +4,158 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
-ACK	util.h	18;"	d
-APP_PKT	util.h	21;"	d
-FALSE	main.h	15;"	d
-FINISH	util.h	22;"	d
+ACK	util.h	60;"	d
+CRITIC	common_variables.h	/^typedef enum {GUITARIST, DANCER, CRITIC} Role;/;"	e	enum:__anon1
+C_AWAIT	util.h	/^typedef enum {C_REQUEST, C_AWAIT, C_PAIR, C_PASSIVE} state_c;$/;"	e	enum:__anon7
+C_GC_COMM	util.h	68;"	d
+C_PAIR	util.h	/^typedef enum {C_REQUEST, C_AWAIT, C_PAIR, C_PASSIVE} state_c;$/;"	e	enum:__anon7
+C_PAIR_G	util.h	/^    int C_PAIR_G;$/;"	m	struct:__anon10
+C_PASSIVE	util.h	/^typedef enum {C_REQUEST, C_AWAIT, C_PAIR, C_PASSIVE} state_c;$/;"	e	enum:__anon7
+C_REQUEST	util.h	/^typedef enum {C_REQUEST, C_AWAIT, C_PAIR, C_PASSIVE} state_c;$/;"	e	enum:__anon7
+C_VENUE_CLAIM	util.h	70;"	d
+C_VENUE_COMM	util.h	69;"	d
+C_VENUE_RELEASE	util.h	71;"	d
+DANCER	common_variables.h	/^typedef enum {GUITARIST, DANCER, CRITIC} Role;/;"	e	enum:__anon1
+D_AWAIT	util.h	/^typedef enum {D_REQUEST, D_AWAIT, D_PAIR, D_PASSIVE} state_d;$/;"	e	enum:__anon6
+D_GD_COMM	util.h	66;"	d
+D_PAIR	util.h	/^typedef enum {D_REQUEST, D_AWAIT, D_PAIR, D_PASSIVE} state_d;$/;"	e	enum:__anon6
+D_PAIR_G	util.h	/^    int D_PAIR_G;$/;"	m	struct:__anon9
+D_PASSIVE	util.h	/^typedef enum {D_REQUEST, D_AWAIT, D_PAIR, D_PASSIVE} state_d;$/;"	e	enum:__anon6
+D_REQUEST	util.h	/^typedef enum {D_REQUEST, D_AWAIT, D_PAIR, D_PASSIVE} state_d;$/;"	e	enum:__anon6
+EMPTY	util.h	59;"	d
+FALSE	main.h	16;"	d
 FLAGS	Makefile	/^FLAGS=-DDEBUG -g$/;"	m
+G1_AWAIT	util.h	/^typedef enum {G1_REQUEST, G1_AWAIT, G1_PAIR, G_VENUE_SEARCH, G_VENUE_AWAIT,$/;"	e	enum:__anon5
+G1_PAIR	util.h	/^typedef enum {G1_REQUEST, G1_AWAIT, G1_PAIR, G_VENUE_SEARCH, G_VENUE_AWAIT,$/;"	e	enum:__anon5
+G1_REQUEST	util.h	/^typedef enum {G1_REQUEST, G1_AWAIT, G1_PAIR, G_VENUE_SEARCH, G_VENUE_AWAIT,$/;"	e	enum:__anon5
+G2_AWAIT	util.h	/^              G_VENUE_REGISTER, G_VENUE_CLAIM, G2_REQUEST, G2_AWAIT, G2_PAIR,$/;"	e	enum:__anon5
+G2_PAIR	util.h	/^              G_VENUE_REGISTER, G_VENUE_CLAIM, G2_REQUEST, G2_AWAIT, G2_PAIR,$/;"	e	enum:__anon5
+G2_REQUEST	util.h	/^              G_VENUE_REGISTER, G_VENUE_CLAIM, G2_REQUEST, G2_AWAIT, G2_PAIR,$/;"	e	enum:__anon5
+GC_PAIR	util.h	73;"	d
+GD_PAIR	util.h	72;"	d
+GUITARIST	common_variables.h	/^typedef enum {GUITARIST, DANCER, CRITIC} Role;/;"	e	enum:__anon1
+G_GC_COMM	util.h	67;"	d
+G_GD_COMM	util.h	65;"	d
+G_INFORM_TIMESTAMP	util.h	75;"	d
+G_PAIR_C	util.h	/^    int G_PAIR_C;$/;"	m	struct:__anon8
+G_PAIR_D	util.h	/^    int G_PAIR_D;$/;"	m	struct:__anon8
+G_PERG	util.h	/^              G_PERG} state_g;$/;"	e	enum:__anon5
+G_VENUE_AWAIT	util.h	/^typedef enum {G1_REQUEST, G1_AWAIT, G1_PAIR, G_VENUE_SEARCH, G_VENUE_AWAIT,$/;"	e	enum:__anon5
+G_VENUE_CLAIM	util.h	/^              G_VENUE_REGISTER, G_VENUE_CLAIM, G2_REQUEST, G2_AWAIT, G2_PAIR,$/;"	e	enum:__anon5
+G_VENUE_REGISTER	util.h	/^              G_VENUE_REGISTER, G_VENUE_CLAIM, G2_REQUEST, G2_AWAIT, G2_PAIR,$/;"	e	enum:__anon5
+G_VENUE_SEARCH	util.h	/^typedef enum {G1_REQUEST, G1_AWAIT, G1_PAIR, G_VENUE_SEARCH, G_VENUE_AWAIT,$/;"	e	enum:__anon5
 HEADERS	Makefile	/^HEADERS=$(SOURCES:.c=.h)$/;"	m
-InFinish	util.h	/^typedef enum {InRun, InMonitor, InWant, InSection, InFinish} state_t;$/;"	e	enum:__anon4
-InMonitor	util.h	/^typedef enum {InRun, InMonitor, InWant, InSection, InFinish} state_t;$/;"	e	enum:__anon4
-InRun	util.h	/^typedef enum {InRun, InMonitor, InWant, InSection, InFinish} state_t;$/;"	e	enum:__anon4
-InSection	util.h	/^typedef enum {InRun, InMonitor, InWant, InSection, InFinish} state_t;$/;"	e	enum:__anon4
-InWant	util.h	/^typedef enum {InRun, InMonitor, InWant, InSection, InFinish} state_t;$/;"	e	enum:__anon4
 LAMPORTH	lamport.h	2;"	d
 MAINH	main.h	2;"	d
 MPI_PAKIET_T	util.c	/^MPI_Datatype MPI_PAKIET_T;$/;"	v
 MSG_LIST_GC	g_variables.h	/^int* MSG_LIST_GC;$/;"	v
-MSG_LIST_GD	common_variables.h	/^packet_t* MSG_LIST_GD;/;"	v
+MSG_LIST_GC	util.h	/^    packet_t* MSG_LIST_GC;$/;"	m	struct:__anon10
+MSG_LIST_GC	util.h	/^    packet_t* MSG_LIST_GC;$/;"	m	struct:__anon8
+MSG_LIST_GD	util.h	/^    packet_t* MSG_LIST_GD;$/;"	m	struct:__anon8
+MSG_LIST_GD	util.h	/^    packet_t* MSG_LIST_GD;$/;"	m	struct:__anon9
 MSG_LIST_VENUE	g_variables.h	/^int* MSG_LIST_VENUE;$/;"	v
+MSG_LIST_VENUE	util.h	/^    short int* MSG_LIST_VENUE;$/;"	m	struct:__anon8
 NITEMS	util.h	14;"	d
-RELEASE	util.h	20;"	d
-REQUEST	util.h	19;"	d
+PERF_READY	util.h	74;"	d
+RELEASE	util.h	62;"	d
+REQUEST	util.h	61;"	d
 REQUEST_QUEUE_H	request_queue.h	2;"	d
+REQ_CLOCK	util.h	/^    int REQ_CLOCK;$/;"	m	struct:__anon10
+REQ_CLOCK	util.h	/^    int REQ_CLOCK;$/;"	m	struct:__anon8
+REQ_CLOCK	util.h	/^    int REQ_CLOCK;$/;"	m	struct:__anon9
 REQ_CLOCK_GC	g_variables.h	/^int REQ_CLOCK_GC;$/;"	v
 REQ_CLOCK_GD	g_variables.h	/^int REQ_CLOCK_GD;$/;"	v
 REQ_CLOCK_VENUE	g_variables.h	/^int REQ_CLOCK_VENUE;$/;"	v
-ROOT	main.h	19;"	d
-Request	request_queue.h	/^} Request;$/;"	t	typeref:struct:__anon1
-RequestQueue	request_queue.h	/^} RequestQueue;$/;"	t	typeref:struct:__anon2
-SEC_IN_STATE	main.h	16;"	d
+ROOT	main.h	20;"	d
+Request	request_queue.h	/^} Request;$/;"	t	typeref:struct:__anon2
+RequestQueue	request_queue.h	/^} RequestQueue;$/;"	t	typeref:struct:__anon3
+Role	common_variables.h	/^typedef enum {GUITARIST, DANCER, CRITIC} Role;/;"	t	typeref:enum:__anon1
+SEC_IN_STATE	main.h	17;"	d
 SOURCES	Makefile	/^SOURCES=$(wildcard *.c)$/;"	m
-STATE_CHANGE_PROB	main.h	17;"	d
-TRUE	main.h	14;"	d
+START_TIMESTAMP	util.h	/^    int* START_TIMESTAMP;$/;"	m	struct:__anon10
+START_TIMESTAMP	util.h	/^    int* START_TIMESTAMP;$/;"	m	struct:__anon9
+STATE_CHANGE_PROB	main.h	18;"	d
+TRUE	main.h	15;"	d
 UTILH	util.h	2;"	d
 VENUE_INDEX	g_variables.h	/^int VENUE_INDEX;/;"	v
+VENUE_INDEX	util.h	/^    int VENUE_INDEX;$/;"	m	struct:__anon8
+VENUE_LIST	util.h	/^    short int *VENUE_LIST;$/;"	m	struct:__anon8
 VENUE_REQ_QUEUE	g_variables.h	/^int* VENUE_REQ_QUEUE;$/;"	v
+VENUE_REQ_QUEUE	util.h	/^    int* VENUE_REQ_QUEUE;$/;"	m	struct:__anon8
 WATEK_GLOWNY_H	watek_glowny.h	2;"	d
 WATEK_KOMUNIKACYJNY_H	watek_komunikacyjny.h	2;"	d
+accessStateCritic	util.c	/^state_g accessStateCritic(state_g *currentState) {$/;"	f
+accessStateDancer	util.c	/^state_g accessStateDancer(state_g *currentState) {$/;"	f
+accessStateGuitarist	util.c	/^state_g accessStateGuitarist(state_g *currentState) {$/;"	f
 ackCount	main.c	/^int ackCount = 0;$/;"	v
 add	request_queue.c	/^void add(RequestQueue* queue, int source, int clock) {$/;"	f
 attach_debugger	main.c	/^void attach_debugger() {$/;"	f
+cArgs	util.h	/^} cArgs;$/;"	t	typeref:struct:__anon10
 canEnter	main.c	/^volatile int canEnter = 0;$/;"	v
-capacity	request_queue.h	/^    int capacity;$/;"	m	struct:__anon2
-changeState	util.c	/^void changeState( state_t newState )$/;"	f
+capacity	request_queue.h	/^    int capacity;$/;"	m	struct:__anon3
+changeStateCritic	util.c	/^void changeStateCritic(state_c *currentState, state_c newState)$/;"	f
+changeStateDancer	util.c	/^void changeStateDancer(state_d *currentState, state_d newState)$/;"	f
+changeStateGuitarist	util.c	/^void changeStateGuitarist(state_g *currentState, state_g newState)$/;"	f
 checkCriticalSectionCondition	watek_komunikacyjny.c	/^void checkCriticalSectionCondition() {$/;"	f
 check_thread_support	main.c	/^void check_thread_support(int provided)$/;"	f
-clock	request_queue.h	/^    int clock;$/;"	m	struct:__anon1
+clock	request_queue.h	/^    int clock;$/;"	m	struct:__anon2
 clockMutex	lamport.c	/^pthread_mutex_t clockMutex = PTHREAD_MUTEX_INITIALIZER;/;"	v
-data	util.h	/^    int data;     \/* przykładowe pole z danymi; można zmienić nazwę na bardziej pasującą *\/$/;"	m	struct:__anon3
-debug	main.h	50;"	d
-debug	main.h	52;"	d
+dArgs	util.h	/^} dArgs;$/;"	t	typeref:struct:__anon9
+data	util.h	/^    int data;     \/* przykładowe pole z danymi; można zmienić nazwę na bardziej pasującą *\/$/;"	m	struct:__anon4
+debug	main.h	55;"	d
+debug	main.h	57;"	d
 finalizuj	main.c	/^void finalizuj()$/;"	f
 freeRequestQueue	request_queue.c	/^void freeRequestQueue(RequestQueue* queue) {$/;"	f
+gArgs	util.h	/^} gArgs;$/;"	t	typeref:struct:__anon8
 getFirstSource	request_queue.c	/^int getFirstSource(RequestQueue* queue) {$/;"	f
 inicjuj_typ_pakietu	util.c	/^void inicjuj_typ_pakietu()$/;"	f
 initRequestQueue	request_queue.c	/^void initRequestQueue(RequestQueue* queue, int capacity) {$/;"	f
-items	request_queue.h	/^    Request* items;$/;"	m	struct:__anon2
+initializeIArray	util.c	/^void initializeIArray(int* array, int length) {$/;"	f
+initializeSIArray	util.c	/^void initializeSIArray(short int* array, int length) {$/;"	f
+items	request_queue.h	/^    Request* items;$/;"	m	struct:__anon3
 lamport	lamport.c	/^int lamport;$/;"	v
 main	main.c	/^int main(int argc, char **argv)$/;"	f
-mainLoop	watek_glowny.c	/^void mainLoop()$/;"	f
+mainLoopCritic	watek_glowny.c	/^void mainLoopCritic(cArgs* args) {$/;"	f
+mainLoopDancer	watek_glowny.c	/^void mainLoopDancer(dArgs* args) {$/;"	f
+mainLoopGuitarist	watek_glowny.c	/^void mainLoopGuitarist(gArgs* args)$/;"	f
 max	watek_komunikacyjny.c	4;"	d	file:
 msgClock	main.c	/^int* msgClock;$/;"	v
+msgListGCMut	util.h	/^    pthread_mutex_t msgListGCMut;$/;"	m	struct:__anon8
+msgListGDMut	util.h	/^    pthread_mutex_t msgListGDMut;$/;"	m	struct:__anon8
+msgListVMut	util.h	/^    pthread_mutex_t msgListVMut;$/;"	m	struct:__anon8
+nCritics	main.c	/^int rank, size, nGuitarists, nDancers, nCritics;$/;"	v
+nDancers	main.c	/^int rank, size, nGuitarists, nDancers, nCritics;$/;"	v
+nGuitarists	main.c	/^int rank, size, nGuitarists, nDancers, nCritics;$/;"	v
+nRooms	main.c	/^int nRooms;$/;"	v
 name	util.c	/^    const char *name;$/;"	m	struct:tagNames_t	file:
-packet_t	util.h	/^} packet_t;$/;"	t	typeref:struct:__anon3
+packet_t	util.h	/^} packet_t;$/;"	t	typeref:struct:__anon4
 printRequestQueue	request_queue.c	/^void printRequestQueue(RequestQueue* queue) {$/;"	f
-println	main.h	56;"	d
-rank	main.c	/^int rank, size;$/;"	v
+print_startup_information	main.c	/^void print_startup_information() {$/;"	f
+println	main.h	61;"	d
+rank	main.c	/^int rank, size, nGuitarists, nDancers, nCritics;$/;"	v
 removeItem	request_queue.c	/^void removeItem(RequestQueue* queue, int source) {$/;"	f
 requestQueue	main.c	/^RequestQueue requestQueue;$/;"	v
+role	main.c	/^Role role;$/;"	v
 sendPacket	util.c	/^void sendPacket(packet_t *pkt, int destination, int tag)$/;"	f
-size	main.c	/^int rank, size;$/;"	v
-size	request_queue.h	/^    int size;$/;"	m	struct:__anon2
-source	request_queue.h	/^    int source;$/;"	m	struct:__anon1
-src	util.h	/^    int src;  $/;"	m	struct:__anon3
-stan	util.c	/^state_t stan=InRun;$/;"	v
-startKomWatek	watek_komunikacyjny.c	/^void *startKomWatek(void *ptr)$/;"	f
+setMsgListToEmpty	util.c	/^void setMsgListToEmpty(packet_t* msgList, int length) {$/;"	f
+size	main.c	/^int rank, size, nGuitarists, nDancers, nCritics;$/;"	v
+size	request_queue.h	/^    int size;$/;"	m	struct:__anon3
+source	request_queue.h	/^    int source;$/;"	m	struct:__anon2
+src	util.h	/^    int src;  $/;"	m	struct:__anon4
+stan	util.h	/^    state_c* stan;$/;"	m	struct:__anon10
+stan	util.h	/^    state_d* stan;$/;"	m	struct:__anon9
+stan	util.h	/^    state_g stan;$/;"	m	struct:__anon8
+startKomWatekC	watek_komunikacyjny.c	/^void *startKomWatekC(void *ptr) {$/;"	f
+startKomWatekD	watek_komunikacyjny.c	/^void *startKomWatekD(void *ptr) {$/;"	f
+startKomWatekG	watek_komunikacyjny.c	/^void *startKomWatekG(void *ptr)$/;"	f
 stateMut	util.c	/^pthread_mutex_t stateMut = PTHREAD_MUTEX_INITIALIZER;$/;"	v
-state_t	util.h	/^typedef enum {InRun, InMonitor, InWant, InSection, InFinish} state_t;$/;"	t	typeref:enum:__anon4
+state_c	util.h	/^typedef enum {C_REQUEST, C_AWAIT, C_PAIR, C_PASSIVE} state_c;$/;"	t	typeref:enum:__anon7
+state_d	util.h	/^typedef enum {D_REQUEST, D_AWAIT, D_PAIR, D_PASSIVE} state_d;$/;"	t	typeref:enum:__anon6
+state_g	util.h	/^              G_PERG} state_g;$/;"	t	typeref:enum:__anon5
 tag	util.c	/^    int tag;$/;"	m	struct:tagNames_t	file:
 tag2string	util.c	/^const char *const tag2string( int tag )$/;"	f
-tagNames	util.c	/^} tagNames[] = { { "pakiet aplikacyjny", APP_PKT }, { "finish", FINISH}, $/;"	v	typeref:struct:tagNames_t
+tagNames	util.c	/^} tagNames[] = { {"pustą wiadomość", EMPTY}, { "potwierdzenie", ACK}, {"prośbę", REQUEST}, {"zwolnienie", RELEASE} };$/;"	v	typeref:struct:tagNames_t
 tagNames_t	util.c	/^struct tagNames_t{$/;"	s	file:
 threadKom	main.c	/^pthread_t threadKom;$/;"	v
-ts	util.h	/^    int ts;       \/* timestamp (zegar lamporta *\/$/;"	m	struct:__anon3
+ts	util.h	/^    int ts;       \/* timestamp (zegar lamporta *\/$/;"	m	struct:__anon4
+venueReqQueueMut	util.h	/^    pthread_mutex_t venueReqQueueMut;$/;"	m	struct:__anon8

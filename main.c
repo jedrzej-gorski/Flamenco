@@ -62,6 +62,11 @@ void check_thread_support(int provided)
 	    break;
         default: printf("Nikt nic nie wie\n");
     }
+    MPI_Barrier(MPI_COMM_WORLD);
+}
+
+void print_startup_information() {
+
 }
 
 void attach_debugger() {
@@ -78,8 +83,8 @@ void attach_debugger() {
 
 int main(int argc, char **argv)
 {
-    if (argc < 8) {
-        fprintf(stderr, "Za mało argumentów\n");
+    if (argc != 5) {
+        fprintf(stderr, "Zła liczba argumentów, podano: %d/5\n", argc);
         exit(-1);
     }
     else {
@@ -101,6 +106,15 @@ int main(int argc, char **argv)
         exit(-1);
     }
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+
+    if (rank == 0) {
+        debug("liczba pokoi: %d", nRooms);
+        debug("liczba krytyków: %d", nCritics);
+        debug("liczba tancerek: %d", nDancers);
+        debug("liczba gitarzystów: %d", nGuitarists);
+    }
+    MPI_Barrier(MPI_COMM_WORLD);
+    
 
     msgClock = (int*)malloc(sizeof(int) * size);
     initRequestQueue(&requestQueue, 5);
@@ -128,6 +142,7 @@ int main(int argc, char **argv)
         pthread_mutex_init(&arguments.msgListVMut, NULL);
         pthread_mutex_init(&arguments.venueReqQueueMut, NULL);
         pthread_create(&threadKom, NULL, startKomWatekG , (void*)&arguments);
+        
         mainLoopGuitarist(&arguments);
     }
     else if (rank < nGuitarists + nDancers) {
@@ -138,6 +153,7 @@ int main(int argc, char **argv)
         arguments.stan = D_REQUEST;
         arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
         pthread_create(&threadKom, NULL, startKomWatekD , (void*)&arguments);
+        
         mainLoopDancer(&arguments);
     }
     else {
@@ -148,10 +164,9 @@ int main(int argc, char **argv)
         arguments.stan = C_REQUEST;
         arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
         pthread_create(&threadKom, NULL, startKomWatekC , (void*)&arguments);
+        
         mainLoopCritic(&arguments);
     }
-    // mainLoop w watek_glowny.c 
-    mainLoop();
     
     finalizuj();
     return 0;

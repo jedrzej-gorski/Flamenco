@@ -88,14 +88,14 @@ state_g accessStateGuitarist(state_g *currentState) {
     return stateValue;
 }
 
-state_g accessStateGuitarist(state_g *currentState) {
+state_g accessStateDancer(state_g *currentState) {
     pthread_mutex_lock(&stateMut);
     state_g stateValue = *currentState;
     pthread_mutex_unlock(&stateMut);
     return stateValue;
 }
 
-state_g accessStateGuitarist(state_g *currentState) {
+state_g accessStateCritic(state_g *currentState) {
     pthread_mutex_lock(&stateMut);
     state_g stateValue = *currentState;
     pthread_mutex_unlock(&stateMut);
@@ -112,7 +112,7 @@ void setMsgListToEmpty(packet_t* msgList, int length) {
     }
 }
 
-void initalizeSIArray(short int* array, int length) {
+void initializeSIArray(short int* array, int length) {
     for (int i = 0; i < length; i++) {
         array[i] = 0;
     }

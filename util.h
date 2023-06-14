@@ -3,6 +3,22 @@
 #include "main.h"
 #include "request_queue.h"
 
+/* typ pakietu */
+typedef struct {
+    int ts;       /* timestamp (zegar lamporta */
+    int src;  
+
+    int data;     /* przykładowe pole z danymi; można zmienić nazwę na bardziej pasującą */
+} packet_t;
+/* packet_t ma trzy pola, więc NITEMS=3. Wykorzystane w inicjuj_typ_pakietu */
+#define NITEMS 3
+
+typedef enum {G1_REQUEST, G1_AWAIT, G1_PAIR, G_VENUE_SEARCH, G_VENUE_AWAIT,
+              G_VENUE_REGISTER, G_VENUE_CLAIM, G2_REQUEST, G2_AWAIT, G2_PAIR,
+              G_PERG} state_g;
+typedef enum {D_REQUEST, D_AWAIT, D_PAIR, D_PASSIVE} state_d;
+typedef enum {C_REQUEST, C_AWAIT, C_PAIR, C_PASSIVE} state_c;
+
 /* struktury przechowujące argumenty */
 typedef struct {
     packet_t* MSG_LIST_GD;
@@ -20,7 +36,7 @@ typedef struct {
     pthread_mutex_t msgListGCMut;
     pthread_mutex_t msgListVMut;
     pthread_mutex_t venueReqQueueMut;
-    state_g* stan;
+    state_g stan;
 } gArgs;
 
 typedef struct {
@@ -38,16 +54,6 @@ typedef struct {
     int* START_TIMESTAMP;
     state_c* stan;
 } cArgs;
-
-/* typ pakietu */
-typedef struct {
-    int ts;       /* timestamp (zegar lamporta */
-    int src;  
-
-    int data;     /* przykładowe pole z danymi; można zmienić nazwę na bardziej pasującą */
-} packet_t;
-/* packet_t ma trzy pola, więc NITEMS=3. Wykorzystane w inicjuj_typ_pakietu */
-#define NITEMS 3
 
 /* Treści wiadomości */
 #define EMPTY 0
@@ -74,11 +80,6 @@ void inicjuj_typ_pakietu();
 /* wysyłanie pakietu, skrót: wskaźnik do pakietu (0 oznacza stwórz pusty pakiet), do kogo, z jakim typem */
 void sendPacket(packet_t *pkt, int destination, int tag);
 
-typedef enum {G1_REQUEST, G1_AWAIT, G1_PAIR, G_VENUE_SEARCH, G_VENUE_AWAIT,
-              G_VENUE_REGISTER, G_VENUE_CLAIM, G2_REQUEST, G2_AWAIT, G2_PAIR,
-              G_PERG} state_g;
-typedef enum {D_REQUEST, D_AWAIT, D_PAIR, D_PASSIVE} state_d;
-typedef enum {C_REQUEST, C_AWAIT, C_PAIR, C_PASSIVE} state_c;
 extern pthread_mutex_t stateMut;
 /* zmiana stanu, obwarowana muteksem */
 void changeStateGuitarist(state_g *currentState, state_g newState);
