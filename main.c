@@ -11,14 +11,20 @@
  * ale zob util.c oraz util.h - zmienną state_t state i funkcję changeState
  *
  */
-int rank, size, nGuitarists, nDancers, nCritics;
-int nRooms;
+int rank, size;
+int nRooms, nGuitarists, nDancers, nCritics;
+
 int ackCount = 0;
 RequestQueue requestQueue;
-int* msgClock;
+
+int pair = 0;
 int state = 0;
 pthread_cond_t stateCond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t stateMutex = PTHREAD_MUTEX_INITIALIZER;
+
+packet_t* dancers = NULL;
+packet_t* lastPosUpdate = NULL;
+packet_t lastInv;
 
 /* 
  * Każdy proces ma dwa wątki - główny i komunikacyjny
@@ -31,8 +37,9 @@ pthread_t threadKom;
 
 void finalizuj()
 {
-    free(msgClock);
     freeRequestQueue(&requestQueue);
+    free(dancers);
+    free(lastPosUpdate);
     pthread_mutex_destroy(&stateMutex);
     pthread_mutex_destroy(&clockMutex);
     /* Czekamy, aż wątek potomny się zakończy */
@@ -65,22 +72,6 @@ void check_thread_support(int provided)
         default: printf("Nikt nic nie wie\n");
     }
     MPI_Barrier(MPI_COMM_WORLD);
-}
-
-void print_startup_information() {
-
-}
-
-void attach_debugger() {
-    int attached = 0;
-
-    // also write PID to a file
-    FILE* file = fopen("/tmp/mpi_debug.pid", "w");
-    fprintf(file, "%d\n", getpid());
-    fclose(file);
-
-    printf("Waiting for debugger to be attached, PID: %d\n", getpid());
-    while (!attached) sleep(1);
 }
 
 int main(int argc, char **argv)
@@ -117,61 +108,27 @@ int main(int argc, char **argv)
     }
     MPI_Barrier(MPI_COMM_WORLD);
     
-
-    msgClock = (int*)malloc(sizeof(int) * size);
     initRequestQueue(&requestQueue, 5);
 
     if (rank < nGuitarists) {
-        // Zadeklaruj i alokuj pamięć strukturom istotnym dla danej roli
-        gArgs arguments;
-
-        arguments.request_queue_gd = (RequestQueue*)malloc(sizeof(RequestQueue));
-        initRequestQueue(arguments.request_queue_gd, 5);
-        arguments.MSG_LIST_GD = (packet_t*)malloc(sizeof(packet_t) * nGuitarists);
-        setMsgListToEmpty(arguments.MSG_LIST_GD, nGuitarists);
-        arguments.MSG_LIST_GC = (packet_t*)malloc(sizeof(packet_t) * nGuitarists);
-        setMsgListToEmpty(arguments.MSG_LIST_GC, nGuitarists);
-        arguments.MSG_LIST_VENUE = (short int*)malloc(sizeof(short int) * nGuitarists);
-        initializeSIArray(arguments.MSG_LIST_VENUE, nGuitarists);
-        arguments.VENUE_REQ_QUEUE = (int*)malloc(sizeof(int) * nGuitarists);
-        initializeIArray(arguments.VENUE_REQ_QUEUE, nGuitarists);
-        arguments.G_PAIR_C = -1;
-        arguments.G_PAIR_D = -1;
-        arguments.REQ_CLOCK = -1;
-        arguments.VENUE_INDEX = -1;
-        arguments.VENUE_LIST = (short int*)malloc(sizeof(short int) * nRooms);
-        initializeSIArray(arguments.VENUE_LIST, nRooms);
-        pthread_mutex_init(&arguments.msgListGDMut, NULL);
-        pthread_mutex_init(&arguments.msgListGCMut, NULL);
-        pthread_mutex_init(&arguments.msgListVMut, NULL);
-        pthread_mutex_init(&arguments.venueReqQueueMut, NULL);
-        pthread_create(&threadKom, NULL, startKomWatekG , (void*)&arguments);
-        
-        mainLoopGuitarist(&arguments);
+        dancers = (packet_t*)malloc(sizeof(packet_t) * nDancers);
+        for (int i = 0; i < nDancers; ++i)
+            dancers[i].data = -1;
+        pthread_create(&threadKom, NULL, startKomWatekG, 0);
+        mainLoopGuitarist();
     }
-    else if (rank < nGuitarists + nDancers) {
-        dArgs arguments;
-        arguments.MSG_LIST_GD = (packet_t*)malloc(sizeof(packet_t) * nDancers);
-        setMsgListToEmpty(arguments.MSG_LIST_GD, nDancers);
-        arguments.D_PAIR_G = -1;
-        arguments.REQ_CLOCK = -1;
-        arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
-        initializeIArray(arguments.START_TIMESTAMP, nGuitarists);
-        pthread_create(&threadKom, NULL, startKomWatekD , (void*)&arguments);
-        
-        mainLoopDancer(&arguments);
+    else if (rank < nGuitarists + nDancers) {      
+        lastInv.data = -1;
+        lastInv.src = -1;
+        lastPosUpdate = (packet_t*)malloc(sizeof(packet_t));
+        lastPosUpdate->data = -1;
+        lastPosUpdate->ts = -1;
+        pthread_create(&threadKom, NULL, startKomWatekD, 0);  
+        mainLoopDancer();
     }
     else {
-        cArgs arguments;
-        arguments.MSG_LIST_GC = (packet_t*)malloc(sizeof(packet_t) * nCritics);
-        setMsgListToEmpty(arguments.MSG_LIST_GC, nCritics);
-        arguments.C_PAIR_G = -1;
-        arguments.REQ_CLOCK = -1;
-        arguments.START_TIMESTAMP = (int*)malloc(sizeof(int) * nGuitarists);
-        initializeIArray(arguments.START_TIMESTAMP, nGuitarists);
-        pthread_create(&threadKom, NULL, startKomWatekC , (void*)&arguments);
-        
-        mainLoopCritic(&arguments);
+        pthread_create(&threadKom, NULL, startKomWatekC, 0);  
+        mainLoopCritic();
     }
     
     finalizuj();

@@ -21,17 +21,18 @@
 /* tutaj TYLKO zapowiedzi - definicje w main.c */
 extern int rank;
 extern int size;
+extern int nRooms;
 extern int nGuitarists;
 extern int nDancers;
 extern int nCritics;
-extern int nRooms;
+
 extern int ackCount;
-extern pthread_t threadKom;
+extern RequestQueue requestQueue;
+
+extern int pair;
 extern int state;
 extern pthread_cond_t stateCond;
 extern pthread_mutex_t stateMutex;
-
-
 
 
 /* macro debug - działa jak printf, kiedy zdefiniowano

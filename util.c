@@ -5,14 +5,18 @@ MPI_Datatype MPI_PAKIET_T;
 struct tagNames_t{
     const char *name;
     int tag;
-} tagNames[] = { {"EMPTY", EMPTY}, { "ACK", ACK}, {"REQUEST", REQUEST}, {"RELEASE", RELEASE} };
+} tagNames[] = { { "G_ACK", G_ACK}, {"G_REQUEST", G_REQUEST}, {"G_RELEASE", G_RELEASE},
+                 { "D_ACK", D_ACK}, {"D_REQUEST", D_REQUEST}, {"D_RELEASE", D_RELEASE},
+                 { "C_ACK", C_ACK}, {"C_REQUEST", C_REQUEST}, {"C_RELEASE", C_RELEASE},
+                 { "GD_INV", GD_INV}, 
+                 { "DG_UPDATE", DG_UPDATE}, {"DG_ACCEPT", DG_ACCEPT}, {"DG_DENY", DG_DENY} };
 
 const char *const tag2string( int tag )
 {
     for (int i=0; i <sizeof(tagNames)/sizeof(struct tagNames_t);i++) {
 	if ( tagNames[i].tag == tag )  return tagNames[i].name;
     }
-    return "<unknown>";
+    return "EMPTY";
 }
 /* tworzy typ MPI_PAKIET_T
 */
@@ -36,6 +40,18 @@ void inicjuj_typ_pakietu()
     MPI_Type_commit(&MPI_PAKIET_T);
 }
 
+const char* rankToTypeName(int rank) {
+    if (rank < nGuitarists) {    
+        return "Gitarzysta";
+    }
+    else if (rank < nGuitarists + nDancers) {        
+        return "Tancerka";
+    }
+    else {
+        return "Krytyk";
+    }
+}
+
 void sendPacketNoClockInc(packet_t *pkt, int destination, int tag)
 {
     int freepkt=0;
@@ -43,12 +59,8 @@ void sendPacketNoClockInc(packet_t *pkt, int destination, int tag)
     pkt->src = rank;
     pkt->ts = lamport;
 
-    if (tag == G1_PAIR) {
-        debug("Wysyłam, że jestem na pozycji %d do tancerki %d\n", pkt->data, destination);
-    }
-    else {
-        debug("Wysyłam %s do %d\n", tag2string(pkt->data), destination);
-    }
+
+    debug("Wysyłam %s do %d\n", tag2string(tag), destination);
     MPI_Send( pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     if (freepkt) free(pkt);
 }
@@ -65,12 +77,7 @@ void sendPacket(packet_t *pkt, int destination, int tag)
     pthread_mutex_unlock(&clockMutex);
     pkt->ts = lamport;
 
-    if (tag == G1_PAIR) {
-        debug("Wysyłam, że jestem na pozycji %d do tancerki %d\n", pkt->data, destination);
-    }
-    else {
-        debug("Wysyłam %s do %d\n", tag2string(pkt->data), destination);
-    }
+    debug("Wysyłam %s do %d\n", tag2string(tag), destination);
     MPI_Send( pkt, 1, MPI_PAKIET_T, destination, tag, MPI_COMM_WORLD);
     if (freepkt) free(pkt);
 }
@@ -80,15 +87,7 @@ void sendPackets(packet_t *pkt, int destinationStart, int destinationEnd, int ta
     pthread_mutex_lock(&clockMutex);
     ++lamport;
     for (int i = destinationStart; i < destinationEnd; i++) {
-        if (pkt != 0) {
-            packet_t *pktCpy = malloc(sizeof(packet_t));
-            memcpy(pktCpy, pkt, sizeof(packet_t));
-
-            sendPacketNoClockInc(pktCpy, i, tag);
-        }
-        else {
-            sendPacketNoClockInc(pkt, i, tag);
-        }
+        sendPacketNoClockInc(pkt, i, tag);
     }
     pthread_mutex_unlock(&clockMutex);
 }
@@ -100,47 +99,4 @@ void changeState(int newState)
     state = newState;
     pthread_cond_signal(&stateCond);
     pthread_mutex_unlock( &stateMutex );
-}
-
-void setMsgListToEmpty(packet_t* msgList, int length) {
-    for (int i = 0; i < length; i++) {
-        packet_t newPacket;
-        newPacket.ts = -1;
-        newPacket.data = EMPTY;
-        newPacket.src = i;
-        msgList[i] = newPacket;
-    }
-}
-
-void initializeSIArray(short int* array, int length) {
-    for (int i = 0; i < length; i++) {
-        array[i] = 0;
-    }
-}
-
-void initializeIArray(int* array, int length) {
-    for (int i = 0; i < length; i++) {
-        array[i] = 0;
-    }
-}
-
-void printSIArray(short int* array, int length, const char* name) {
-    debug("Zawartość tablicy %s:\n", name);
-    for (int i = 0; i < length; i++) {
-        debug("%d: %d\n", i, array[i]);
-    }
-}
-
-void printIArray(int* array, int length, const char* name) {
-    debug("Zawartość tablicy %s:\n", name);
-    for (int i = 0; i < length; i++) {
-        debug("%d: %d\n", i, array[i]);
-    }
-}
-
-void printMSGArray(packet_t* array, int length, const char* name) {
-    debug("Zawartość tablicy %s[%d]:\n", name, length);
-    for (int i = 0; i < length; i++) {
-        debug("%d: ts=%d src=%d data=%d\n", i, array[i].ts, array[i].src, array[i].data);
-    }
 }
