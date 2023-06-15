@@ -13,7 +13,7 @@
 /* boolean */
 #define TRUE 1
 #define FALSE 0
-#define SEC_IN_STATE 2
+#define SEC_IN_STATE 1
 #define STATE_CHANGE_PROB 10
 
 #define ROOT 0
@@ -33,6 +33,10 @@ extern int pair;
 extern int state;
 extern pthread_cond_t stateCond;
 extern pthread_mutex_t stateMutex;
+
+void resetDancer();
+void resetGuitarist();
+void resetCritic();
 
 
 /* macro debug - działa jak printf, kiedy zdefiniowano

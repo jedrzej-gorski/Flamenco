@@ -13,9 +13,8 @@ typedef struct {
 #define NITEMS 3
 
 /* Stany */
-typedef enum {G_START, G_PAIR, GD_PAIR_AWAIT_RESPONSE, G_VENUE_SEARCH, G_VENUE_AWAIT,
-              G_VENUE_REGISTER, G_PERG} state_g;
-typedef enum {D_START, D_PAIR, D_PASSIVE} state_d;
+typedef enum {G_START, G_PAIR, GD_PAIR_AWAIT_RESPONSE, G_PERFORM } state_g;
+typedef enum {D_START, D_PAIR, D_PASSIVE, D_PERFORM} state_d;
 typedef enum {C_START, C_PAIR, C_PASSIVE} state_c;
 
 /* Tagi wiadomości */
@@ -36,6 +35,8 @@ typedef enum {C_START, C_PAIR, C_PASSIVE} state_c;
 #define DG_UPDATE 10
 #define DG_ACCEPT 11
 #define DG_DENY 12
+
+#define GD_READY 13
 
 #define EMPTY 999
 

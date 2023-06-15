@@ -103,7 +103,7 @@ void *startKomWatekG(void *ptr)
             case DG_ACCEPT: {
                 if (state == GD_PAIR_AWAIT_RESPONSE) {
                     pair = status.MPI_SOURCE;
-                    changeState(G_VENUE_SEARCH);
+                    changeState(G_PERFORM);
                 }
                 break;
             }
@@ -152,7 +152,6 @@ void *startKomWatekD(void *ptr) {
                     if (lastInv.data == lastPosUpdate->ts) {
                         pair = lastInv.src;
                         changeState(D_PASSIVE);
-                        sendPacket(0, lastInv.src, DG_ACCEPT);
                     }
                     else {
                         sendPacket(0, lastInv.src, DG_DENY);
@@ -162,6 +161,11 @@ void *startKomWatekD(void *ptr) {
                     sendPacket(0, lastInv.src, DG_DENY);
                 }
                 break;
+            }
+            case GD_READY: {
+                if (state == D_PASSIVE) {
+                    changeState(D_PERFORM);
+                }
             }
             default: {
                 break;

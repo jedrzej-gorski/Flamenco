@@ -8,7 +8,7 @@ struct tagNames_t{
 } tagNames[] = { { "G_ACK", G_ACK}, {"G_REQUEST", G_REQUEST}, {"G_RELEASE", G_RELEASE},
                  { "D_ACK", D_ACK}, {"D_REQUEST", D_REQUEST}, {"D_RELEASE", D_RELEASE},
                  { "C_ACK", C_ACK}, {"C_REQUEST", C_REQUEST}, {"C_RELEASE", C_RELEASE},
-                 { "GD_INV", GD_INV}, 
+                 { "GD_INV", GD_INV}, {"GD_READY", GD_READY},
                  { "DG_UPDATE", DG_UPDATE}, {"DG_ACCEPT", DG_ACCEPT}, {"DG_DENY", DG_DENY} };
 
 const char *const tag2string( int tag )

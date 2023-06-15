@@ -74,6 +74,25 @@ void check_thread_support(int provided)
     MPI_Barrier(MPI_COMM_WORLD);
 }
 
+void resetDancer() {
+	lastInv.data = -1;
+	lastInv.src = -1;
+	lastPosUpdate->data = -1;
+	lastPosUpdate->ts = -1;
+	ackCount = 0;
+}
+
+void resetGuitarist() {
+	for (int i = 0; i < nDancers; ++i) {
+		dancers[i].data = -1;
+	}
+	ackCount = 0;
+}
+
+void resetCritic() {
+    
+}
+
 int main(int argc, char **argv)
 {
     if (argc != 5) {
@@ -112,21 +131,20 @@ int main(int argc, char **argv)
 
     if (rank < nGuitarists) {
         dancers = (packet_t*)malloc(sizeof(packet_t) * nDancers);
-        for (int i = 0; i < nDancers; ++i)
-            dancers[i].data = -1;
+        resetGuitarist();
+
         pthread_create(&threadKom, NULL, startKomWatekG, 0);
         mainLoopGuitarist();
     }
     else if (rank < nGuitarists + nDancers) {      
-        lastInv.data = -1;
-        lastInv.src = -1;
         lastPosUpdate = (packet_t*)malloc(sizeof(packet_t));
-        lastPosUpdate->data = -1;
-        lastPosUpdate->ts = -1;
+        resetDancer();
+
         pthread_create(&threadKom, NULL, startKomWatekD, 0);  
         mainLoopDancer();
     }
     else {
+        resetCritic();
         pthread_create(&threadKom, NULL, startKomWatekC, 0);  
         mainLoopCritic();
     }
