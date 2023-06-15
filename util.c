@@ -11,7 +11,8 @@ struct tagNames_t{
                  { "GD_INV", GD_INV}, {"GD_READY", GD_READY},
                  { "DG_UPDATE", DG_UPDATE}, {"DG_ACCEPT", DG_ACCEPT}, {"DG_DENY", DG_DENY},
                  { "GC_INV", GC_INV}, {"GC_READY", GC_READY},
-                 { "CG_UPDATE", CG_UPDATE}, {"CG_ACCEPT", CG_ACCEPT}, {"CG_DENY", CG_DENY} };
+                 { "CG_UPDATE", CG_UPDATE}, {"CG_ACCEPT", CG_ACCEPT}, {"CG_DENY", CG_DENY},
+                 { "EMPTY", EMPTY}  };
 
 const char *const tag2string( int tag )
 {

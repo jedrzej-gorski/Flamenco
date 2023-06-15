@@ -26,12 +26,15 @@ void checkStateChangeConditionsG() {
                     sendPacket(0, dancers[i].src, GD_INV);
                 }
             }
+
+            break;
         }
         case G_FIND_VENUE: {
             if (getPosition(&requestQueue, rank) <= nRooms) {
-                debug("Tutaj faktycznie zmieniam na %d", GC_PAIR);
                 changeState(GC_PAIR);
             }
+
+            break;
         }
         case GC_PAIR: {
             // wyślij zaproszenie do krytyka na tej samej pozycji
@@ -41,6 +44,8 @@ void checkStateChangeConditionsG() {
                     sendPacket(0, critics[i].src, GC_INV);
                 }
             }
+
+            break;
         }
         default: {
             break;
@@ -113,7 +118,6 @@ void *startKomWatekG(void *ptr)
             case DG_ACCEPT: {
                 if (state == GD_PAIR_AWAIT_RESPONSE) {
                     pair = status.MPI_SOURCE;
-                    debug("Uwaga zmieniam stannnn na %d", G_FIND_VENUE);
                     changeState(G_FIND_VENUE);
                 }
                 break;
@@ -186,6 +190,7 @@ void *startKomWatekD(void *ptr) {
                 if (state == D_PASSIVE) {
                     changeState(D_PERFORM);
                 }
+                break;
             }
             default: {
                 break;
@@ -230,6 +235,7 @@ void *startKomWatekC(void *ptr) {
                 if (state == C_PASSIVE) {
                     changeState(C_WATCH);
                 }
+                break;
             }
             default: {
                 break;

@@ -26,6 +26,9 @@ void mainLoopGuitarist()
 			case G_PAIR: {
 				debug("Mam numerek %d", order);
 
+				// wybudź wątek komunikacyjny
+				sendPacket(0, rank, EMPTY);
+
 				// czekaj na tancerkę na tej samej pozycji
 				waitOnState(G_FIND_VENUE);
 				debug("Jestem w parze z %d", pair);
@@ -34,13 +37,25 @@ void mainLoopGuitarist()
 			}
 			case G_FIND_VENUE: {
 				debug("Szukam sali");
+
+				// wybudź wątek komunikacyjny
+				sendPacket(0, rank, EMPTY);
+
 				waitOnState(GC_PAIR);
 				debug("Mam salę");
+
+				break;
 			}
 			case GC_PAIR: {
 				debug("Szukam krytyka");
+
+				// wybudź wątek komunikacyjny
+				sendPacket(0, rank, EMPTY);
+
 				waitOnState(G_PERFORM);
 				debug("Znalazłem krytyka: %d", critic);
+
+				break;
 			}
 			case G_PERFORM: {
 				debug("Informuję %d, że jesteśmy gotowi", pair);
@@ -53,6 +68,7 @@ void mainLoopGuitarist()
 
 				resetGuitarist();
 				changeState(G_START);
+
 				break;
 			}
 		}
@@ -92,7 +108,7 @@ void mainLoopDancer() {
 				debug("Jestem w parze z %d", pair);
 				sendPacket(0, pair, DG_ACCEPT);
 				
-				waitOnState(G_PERFORM);
+				waitOnState(D_PERFORM);
 				break;
 			}
 			case D_PERFORM: {
