@@ -109,6 +109,8 @@ void *startKomWatekG(void *ptr)
             }
             case DG_DENY: {
                 if (state == GD_PAIR_AWAIT_RESPONSE) {
+                    // nie wyśle do tej tancerce zaproszenie dopóki nie otrzymam od niej nowego updata
+                    dancers[status.MPI_SOURCE-nGuitarists].data = -1;
                     changeState(G_PAIR);
                 }
                 break;
