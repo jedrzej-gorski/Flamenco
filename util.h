@@ -13,9 +13,9 @@ typedef struct {
 #define NITEMS 3
 
 /* Stany */
-typedef enum {G_START, G_PAIR, GD_PAIR_AWAIT_RESPONSE, G_PERFORM } state_g;
+typedef enum {G_START, G_PAIR, GD_PAIR_AWAIT_RESPONSE, G_FIND_VENUE, GC_PAIR, GC_PAIR_AWAIT_RESPONSE, G_PERFORM } state_g;
 typedef enum {D_START, D_PAIR, D_PASSIVE, D_PERFORM} state_d;
-typedef enum {C_START, C_PAIR, C_PASSIVE} state_c;
+typedef enum {C_START, C_PAIR, C_PASSIVE, C_WATCH} state_c;
 
 /* Tagi wiadomości */
 #define G_ACK 0
@@ -31,12 +31,19 @@ typedef enum {C_START, C_PAIR, C_PASSIVE} state_c;
 #define C_RELEASE 8
 
 #define GD_INV 9
-
 #define DG_UPDATE 10
 #define DG_ACCEPT 11
 #define DG_DENY 12
 
 #define GD_READY 13
+
+#define GC_INV 14
+#define CG_UPDATE 15
+#define CG_ACCEPT 16
+#define CG_DENY 17
+
+#define GC_READY 18
+
 
 #define EMPTY 999
 
@@ -52,4 +59,5 @@ void sendPackets(packet_t *pkt, int destinationStart, int destinationEnd, int ta
 void changeState(int newState);
 
 extern packet_t* dancers;
+extern packet_t* critics;
 #endif

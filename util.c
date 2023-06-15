@@ -9,14 +9,16 @@ struct tagNames_t{
                  { "D_ACK", D_ACK}, {"D_REQUEST", D_REQUEST}, {"D_RELEASE", D_RELEASE},
                  { "C_ACK", C_ACK}, {"C_REQUEST", C_REQUEST}, {"C_RELEASE", C_RELEASE},
                  { "GD_INV", GD_INV}, {"GD_READY", GD_READY},
-                 { "DG_UPDATE", DG_UPDATE}, {"DG_ACCEPT", DG_ACCEPT}, {"DG_DENY", DG_DENY} };
+                 { "DG_UPDATE", DG_UPDATE}, {"DG_ACCEPT", DG_ACCEPT}, {"DG_DENY", DG_DENY},
+                 { "GC_INV", GC_INV}, {"GC_READY", GC_READY},
+                 { "CG_UPDATE", CG_UPDATE}, {"CG_ACCEPT", CG_ACCEPT}, {"CG_DENY", CG_DENY} };
 
 const char *const tag2string( int tag )
 {
     for (int i=0; i <sizeof(tagNames)/sizeof(struct tagNames_t);i++) {
 	if ( tagNames[i].tag == tag )  return tagNames[i].name;
     }
-    return "EMPTY";
+    return "<unknown>";
 }
 /* tworzy typ MPI_PAKIET_T
 */

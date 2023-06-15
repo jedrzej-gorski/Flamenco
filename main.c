@@ -18,11 +18,13 @@ int ackCount = 0;
 RequestQueue requestQueue;
 
 int pair = 0;
+int critic = 0;
 int state = 0;
 pthread_cond_t stateCond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t stateMutex = PTHREAD_MUTEX_INITIALIZER;
 
 packet_t* dancers = NULL;
+packet_t* critics = NULL;
 
 int order = -1;
 int baseOrder = 0;
@@ -124,8 +126,12 @@ int main(int argc, char **argv)
 
     if (rank < nGuitarists) {
         dancers = (packet_t*)malloc(sizeof(packet_t) * nDancers);
+        critics = (packet_t*)malloc(sizeof(packet_t) * nCritics);
         for (int i = 0; i < nDancers; ++i) {
 		    dancers[i].data = -1;
+	    }
+        for (int i = 0; i < nCritics; ++i) {
+		    critics[i].data = -1;
 	    }
         resetGuitarist();
 

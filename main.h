@@ -13,7 +13,7 @@
 /* boolean */
 #define TRUE 1
 #define FALSE 0
-#define SEC_IN_STATE 1
+#define SEC_IN_STATE 0
 #define STATE_CHANGE_PROB 10
 
 #define ROOT 0
@@ -30,6 +30,7 @@ extern int ackCount;
 extern RequestQueue requestQueue;
 
 extern int pair;
+extern int critic;
 extern int state;
 extern pthread_cond_t stateCond;
 extern pthread_mutex_t stateMutex;

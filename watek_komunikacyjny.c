@@ -11,9 +11,8 @@ void checkStateChangeConditionsG() {
     switch (state) {
         case G_START: {
             // czeka dopóki nie dostanie ACK od wszystkich gitarzystow
-            // oraz dopóki w kojece nie znajdzie się na pozycji niewiększej niż liczba tancerek
-            int queuePosition = getPosition(&requestQueue, rank);
-            if (ackCount == nGuitarists && getPosition(&requestQueue, rank) <= nDancers) {
+            if (ackCount == nGuitarists) {
+                int queuePosition = getPosition(&requestQueue, rank);
                 order = queuePosition + baseOrder;
                 changeState(G_PAIR);
             }
@@ -28,6 +27,21 @@ void checkStateChangeConditionsG() {
                 }
             }
         }
+        case G_FIND_VENUE: {
+            if (getPosition(&requestQueue, rank) <= nRooms) {
+                debug("Tutaj faktycznie zmieniam na %d", GC_PAIR);
+                changeState(GC_PAIR);
+            }
+        }
+        case GC_PAIR: {
+            // wyślij zaproszenie do krytyka na tej samej pozycji
+            for (int i = 0; i < nCritics; ++i) {
+                if (critics[i].data == order) {
+                    changeState(GC_PAIR_AWAIT_RESPONSE);
+                    sendPacket(0, critics[i].src, GC_INV);
+                }
+            }
+        }
         default: {
             break;
         }
@@ -37,8 +51,8 @@ void checkStateChangeConditionsG() {
 void checkStateChangeConditionsD() {
     switch (state) {
         case D_START: {
-            int queuePosition = getPosition(&requestQueue, rank);
-            if (ackCount == nDancers && queuePosition <= nGuitarists) {
+            if (ackCount == nDancers) {
+                int queuePosition = getPosition(&requestQueue, rank);
                 order = queuePosition + baseOrder;
                 changeState(D_PAIR);
             }
@@ -53,8 +67,8 @@ void checkStateChangeConditionsD() {
 void checkStateChangeConditionsC() {
     switch (state) {
         case C_START: {
-            int queuePosition = getPosition(&requestQueue, rank);
             if (ackCount == nCritics) {
+                int queuePosition = getPosition(&requestQueue, rank);
                 order = queuePosition + baseOrder;
                 changeState(C_PAIR);
             }
@@ -99,13 +113,32 @@ void *startKomWatekG(void *ptr)
             case DG_ACCEPT: {
                 if (state == GD_PAIR_AWAIT_RESPONSE) {
                     pair = status.MPI_SOURCE;
-                    changeState(G_PERFORM);
+                    debug("Uwaga zmieniam stannnn na %d", G_FIND_VENUE);
+                    changeState(G_FIND_VENUE);
                 }
                 break;
             }
             case DG_DENY: {
-                debug("Tego nie powinno być");
+                debug("Tancerka mi odmówiła");
                 if (state == GD_PAIR_AWAIT_RESPONSE) {
+                    changeState(G_PAIR);
+                }
+                break;
+            }
+             case CG_UPDATE: {
+                critics[status.MPI_SOURCE-nGuitarists-nDancers] = pakiet;
+                break;
+            }
+            case CG_ACCEPT: {
+                if (state == GC_PAIR_AWAIT_RESPONSE) {
+                    critic = status.MPI_SOURCE;
+                    changeState(G_PERFORM);
+                }
+                break;
+            }
+            case CG_DENY: {
+                debug("Krytyk mi odmówił");
+                if (state == GC_PAIR_AWAIT_RESPONSE) {
                     changeState(G_PAIR);
                 }
                 break;
@@ -164,5 +197,45 @@ void *startKomWatekD(void *ptr) {
 }
 
 void *startKomWatekC(void *ptr) {
+    MPI_Status status;
+    packet_t pakiet;
+    while (1) {
+        MPI_Recv( &pakiet, 1, MPI_PAKIET_T, MPI_ANY_SOURCE, MPI_ANY_TAG, MPI_COMM_WORLD, &status);
+        
+        pthread_mutex_lock(&clockMutex);
+        lamport = max(lamport, pakiet.ts)+1;
+        pthread_mutex_unlock(&clockMutex);
 
+        switch ( status.MPI_TAG ) {
+            case C_REQUEST: {
+                add(&requestQueue, status.MPI_SOURCE, pakiet.ts);
+                sendPacket(0, status.MPI_SOURCE, C_ACK);
+                break;
+            }
+            case C_ACK: {
+                ++ackCount;
+                break;
+            }
+            case C_RELEASE: {
+                ++baseOrder;
+                removeItem(&requestQueue, status.MPI_SOURCE);
+                break;
+            }
+            case GC_INV: {
+                pair = status.MPI_SOURCE;
+                changeState(C_PASSIVE);
+                break;
+            }
+            case GC_READY: {
+                if (state == C_PASSIVE) {
+                    changeState(C_WATCH);
+                }
+            }
+            default: {
+                break;
+            }
+        }
+
+        checkStateChangeConditionsC();
+    }
 }
