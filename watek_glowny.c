@@ -24,8 +24,7 @@ void mainLoopGuitarist()
 				break;
 			}
 			case G_PAIR: {
-				int position = getPosition(&requestQueue, rank);
-				debug("Jestem %d w kolejce", position);
+				debug("Mam numerek %d", order);
 
 				// czekaj na tancerkę na tej samej pozycji
 				waitOnState(G_PERFORM);
@@ -65,12 +64,13 @@ void mainLoopDancer() {
 				break;
 			}
 			case D_PAIR: {
-				int position = getPosition(&requestQueue, rank);
-				debug("Jestem %d w kolejce", position);
+				debug("Mam numerek %d", order);
 				debug("Wysyłam swoją pozycję do wszystkich gitarzystów");
 
-				// wymusza update
-				sendPacket(0, rank, EMPTY);
+				// wyślij swój numerek do wszystkich gitarzystów
+				packet_t pkt;
+				pkt.data = order;
+				sendPackets(&pkt, 0, nGuitarists, DG_UPDATE);
 
 				// czekaj na zaproszenie od gitarzysty
 				waitOnState(D_PASSIVE);
@@ -79,7 +79,7 @@ void mainLoopDancer() {
 			}
 			case D_PASSIVE: {
 				debug("Jestem w parze z %d", pair);
-				sendPacket(0, lastInv.src, DG_ACCEPT);
+				sendPacket(0, pair, DG_ACCEPT);
 				
 				waitOnState(G_PERFORM);
 				break;

@@ -12,19 +12,19 @@ void checkStateChangeConditionsG() {
         case G_START: {
             // czeka dopóki nie dostanie ACK od wszystkich gitarzystow
             // oraz dopóki w kojece nie znajdzie się na pozycji niewiększej niż liczba tancerek
+            int queuePosition = getPosition(&requestQueue, rank);
             if (ackCount == nGuitarists && getPosition(&requestQueue, rank) <= nDancers) {
+                order = queuePosition + baseOrder;
                 changeState(G_PAIR);
             }
             break;
         }
         case G_PAIR: {
-            // wyślij zaproszenie do tancerki na tej samej pozycji w kolejce
+            // wyślij zaproszenie do tancerki na tej samej pozycji
             for (int i = 0; i < nDancers; ++i) {
-                if (dancers[i].data == getPosition(&requestQueue, rank)) {
-                    packet_t pkt;
-                    pkt.data = dancers[i].ts;
+                if (dancers[i].data == order) {
                     changeState(GD_PAIR_AWAIT_RESPONSE);
-                    sendPacket(&pkt, dancers[i].src, GD_INV);
+                    sendPacket(0, dancers[i].src, GD_INV);
                 }
             }
         }
@@ -37,19 +37,12 @@ void checkStateChangeConditionsG() {
 void checkStateChangeConditionsD() {
     switch (state) {
         case D_START: {
-            if (ackCount == nDancers && getPosition(&requestQueue, rank) <= nGuitarists) {
+            int queuePosition = getPosition(&requestQueue, rank);
+            if (ackCount == nDancers && queuePosition <= nGuitarists) {
+                order = queuePosition + baseOrder;
                 changeState(D_PAIR);
             }
             break;
-        }
-        case D_PAIR: {
-            // sprawdź czy moja pozycja w kolejce się nie zmieniła
-            int position = getPosition(&requestQueue, rank);
-            if (position != lastPosUpdate->data) {
-                // zmieniła się, poinformuj gitarzystów
-				lastPosUpdate->data = position;
-				sendPackets(lastPosUpdate, 0, nGuitarists, DG_UPDATE);
-            }
         }
         default: {
             break;
@@ -60,7 +53,9 @@ void checkStateChangeConditionsD() {
 void checkStateChangeConditionsC() {
     switch (state) {
         case C_START: {
+            int queuePosition = getPosition(&requestQueue, rank);
             if (ackCount == nCritics) {
+                order = queuePosition + baseOrder;
                 changeState(C_PAIR);
             }
             break;
@@ -93,6 +88,7 @@ void *startKomWatekG(void *ptr)
                 break;
             }
             case G_RELEASE: {
+                ++baseOrder;
                 removeItem(&requestQueue, status.MPI_SOURCE);
                 break;
             }
@@ -108,9 +104,8 @@ void *startKomWatekG(void *ptr)
                 break;
             }
             case DG_DENY: {
+                debug("Tego nie powinno być");
                 if (state == GD_PAIR_AWAIT_RESPONSE) {
-                    // nie wyśle do tej tancerce zaproszenie dopóki nie otrzymam od niej nowego updata
-                    dancers[status.MPI_SOURCE-nGuitarists].data = -1;
                     changeState(G_PAIR);
                 }
                 break;
@@ -145,23 +140,13 @@ void *startKomWatekD(void *ptr) {
                 break;
             }
             case D_RELEASE: {
+                ++baseOrder;
                 removeItem(&requestQueue, status.MPI_SOURCE);
                 break;
             }
             case GD_INV: {
-                lastInv = pakiet;
-                if (state == D_PAIR) {
-                    if (lastInv.data == lastPosUpdate->ts) {
-                        pair = lastInv.src;
-                        changeState(D_PASSIVE);
-                    }
-                    else {
-                        sendPacket(0, lastInv.src, DG_DENY);
-                    }
-                }
-                else {
-                    sendPacket(0, lastInv.src, DG_DENY);
-                }
+                pair = status.MPI_SOURCE;
+                changeState(D_PASSIVE);
                 break;
             }
             case GD_READY: {

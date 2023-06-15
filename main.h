@@ -34,6 +34,9 @@ extern int state;
 extern pthread_cond_t stateCond;
 extern pthread_mutex_t stateMutex;
 
+extern int order;
+extern int baseOrder;
+
 void resetDancer();
 void resetGuitarist();
 void resetCritic();

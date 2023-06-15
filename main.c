@@ -23,8 +23,9 @@ pthread_cond_t stateCond = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t stateMutex = PTHREAD_MUTEX_INITIALIZER;
 
 packet_t* dancers = NULL;
-packet_t* lastPosUpdate = NULL;
-packet_t lastInv;
+
+int order = -1;
+int baseOrder = 0;
 
 /* 
  * Każdy proces ma dwa wątki - główny i komunikacyjny
@@ -39,7 +40,6 @@ void finalizuj()
 {
     freeRequestQueue(&requestQueue);
     free(dancers);
-    free(lastPosUpdate);
     pthread_mutex_destroy(&stateMutex);
     pthread_mutex_destroy(&clockMutex);
     /* Czekamy, aż wątek potomny się zakończy */
@@ -75,22 +75,15 @@ void check_thread_support(int provided)
 }
 
 void resetDancer() {
-	lastInv.data = -1;
-	lastInv.src = -1;
-	lastPosUpdate->data = -1;
-	lastPosUpdate->ts = -1;
 	ackCount = 0;
 }
 
 void resetGuitarist() {
-	for (int i = 0; i < nDancers; ++i) {
-		dancers[i].data = -1;
-	}
 	ackCount = 0;
 }
 
 void resetCritic() {
-    
+    ackCount = 0;
 }
 
 int main(int argc, char **argv)
@@ -131,13 +124,15 @@ int main(int argc, char **argv)
 
     if (rank < nGuitarists) {
         dancers = (packet_t*)malloc(sizeof(packet_t) * nDancers);
+        for (int i = 0; i < nDancers; ++i) {
+		    dancers[i].data = -1;
+	    }
         resetGuitarist();
 
         pthread_create(&threadKom, NULL, startKomWatekG, 0);
         mainLoopGuitarist();
     }
     else if (rank < nGuitarists + nDancers) {      
-        lastPosUpdate = (packet_t*)malloc(sizeof(packet_t));
         resetDancer();
 
         pthread_create(&threadKom, NULL, startKomWatekD, 0);  

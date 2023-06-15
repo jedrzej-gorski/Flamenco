@@ -52,7 +52,4 @@ void sendPackets(packet_t *pkt, int destinationStart, int destinationEnd, int ta
 void changeState(int newState);
 
 extern packet_t* dancers;
-extern packet_t* lastPosUpdate;
-extern packet_t lastInv;
-
 #endif
