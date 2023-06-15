@@ -42,6 +42,7 @@ void finalizuj()
 {
     freeRequestQueue(&requestQueue);
     free(dancers);
+    free(critics);
     pthread_mutex_destroy(&stateMutex);
     pthread_mutex_destroy(&clockMutex);
     /* Czekamy, aż wątek potomny się zakończy */
